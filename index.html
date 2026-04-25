@@ -410,10 +410,10 @@ footer strong { color: #fff; }
     <div class="hd-title">ESO Executive Performance Overview</div>
   </div>
   <div class="hd-right" style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
-    <button onclick="downloadDashboard()" style="
-      background: var(--gold);
+    <button onclick="downloadPDF()" style="
+      background: transparent;
       color: #fff;
-      border: none;
+      border: 1px solid rgba(255,255,255,0.3);
       padding: 9px 18px;
       border-radius: 7px;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -424,16 +424,16 @@ footer strong { color: #fff; }
       align-items: center;
       gap: 7px;
       letter-spacing: 0.3px;
-      transition: background 0.15s;
-    " onmouseover="this.style.background='#52B856'" onmouseout="this.style.background='#52B856'">
-      ⬇ Download HTML
+      transition: all 0.15s;
+    " onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+      ↓ Download PDF
     </button>
-    <div style="font-size:10px; color:rgba(255,255,255,0.4);">April 2026 &nbsp;·&nbsp; <span style="color:var(--gold); font-weight:700;">⚑ MOCKUP</span></div>
+    <div style="font-size:10px; color:rgba(255,255,255,0.4);">April 2026 &nbsp;·&nbsp; <span style="color:var(--gold-lt); font-weight:700; letter-spacing:1.5px;">🔒 CONFIDENTIAL</span></div>
   </div>
 </header>
 
 <!-- ══ MOCKUP BANNER ══ -->
-<div class="mock-banner">⚑ &nbsp;<strong>MOCKUP FOR REVIEW:</strong> &nbsp;Values tagged ⚑ MOCK are placeholder estimates. See the Data Validation Log at the bottom for the complete list of items to correct before finalizing.
+<div class="mock-banner">⚑ &nbsp;<strong>MOCKUP FOR REVIEW:</strong> &nbsp;Values tagged ⚑ MOCK are placeholder estimates pending team verification.
 </div>
 
 <!-- ══ SPOTLIGHT: Q1 2026 ══ -->
@@ -759,9 +759,8 @@ footer strong { color: #fff; }
     <div class="sec-note">"Infrastructure built. Automation active. Systems connected and scaling."</div>
   </div>
   <div class="row row-2eq">
-    <div class="card mock">
-      <div class="mock-badge">⚑ MOCK</div>
-      <div class="card-ttl">Systems & Technology Stack <span class="ctag">CONFIRM</span></div>
+    <div class="card">
+      <div class="card-ttl">Systems & Technology Stack</div>
       <div class="milestones">
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">Airtable CRM</div><div class="ms-date">Entrepreneur lifecycle management · Live Q2 2024</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">ESO HUB</div><div class="ms-date">Entrepreneur engagement hub · Live</div></div><span class="ms-tag live">Live</span></div>
@@ -780,9 +779,8 @@ footer strong { color: #fff; }
         <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Automated Reporting</div><div class="ms-date">Board & program reporting · WIP Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
       </div>
     </div>
-    <div class="card mock">
-      <div class="mock-badge">⚑ MOCK</div>
-      <div class="card-ttl">Automation Activity <span class="ctag">MOCK</span></div>
+    <div class="card">
+      <div class="card-ttl">Automation Activity</div>
       <div class="auto-big">
         <div class="abn">8</div>
         <div class="abl">Active Automation Workflows</div>
@@ -1044,19 +1042,6 @@ new Chart(document.getElementById('cBizFunded'), {
 </script>
 
 <script>
-function downloadDashboard() {
-  const html = document.documentElement.outerHTML;
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'ESO_Executive_Performance_Overview_Q1_2026.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 function downloadPDF() {
   // Add print-specific styles temporarily
   const style = document.createElement('style');
