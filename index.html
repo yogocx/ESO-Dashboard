@@ -1217,5 +1217,439 @@ function downloadPDF() {
   }, 1500);
 }
 </script>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  ESO DASHBOARD — GOOGLE SHEETS LIVE CONNECTION
+//  Sheet ID: 1vZswIqatPvc8OXHmyR7iUiaJsgLTeguoqyJsXpH4aVo
+//  Fetches on every page load. Falls back to hardcoded values
+//  if sheet is unavailable.
+// ══════════════════════════════════════════════════════════
+
+const SHEET_ID = "1vZswIqatPvc8OXHmyR7iUiaJsgLTeguoqyJsXpH4aVo";
+
+// ── Utility: parse gviz/tq response ──
+function parseGviz(text) {
+  try {
+    const clean = text.replace(/^.*?\(/, '').replace(/\);?\s*$/, '');
+    return JSON.parse(clean);
+  } catch(e) { return null; }
+}
+
+// ── Utility: fetch a sheet tab as parsed gviz data ──
+async function fetchSheet(tabName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
+  try {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    return parseGviz(text);
+  } catch(e) {
+    console.warn('ESO Dashboard: Could not fetch sheet tab:', tabName, e);
+    return null;
+  }
+}
+
+// ── Utility: parse value from sheet cell ──
+function cellVal(cell) {
+  if (!cell || cell.v === null || cell.v === undefined) return null;
+  return cell.v;
+}
+
+// ── Utility: strip currency/% formatting to number ──
+function toNum(v) {
+  if (v === null || v === undefined || v === '') return null;
+  if (typeof v === 'number') return v;
+  const s = String(v).replace(/[$,%]/g, '').replace(/,/g, '').trim();
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
+// ── Utility: format number as currency ──
+function fmtCurrency(n, decimals=0) {
+  if (n === null || n === undefined) return null;
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(0) + 'K';
+  return '$' + n.toLocaleString();
+}
+
+// ── Utility: safely update text content ──
+function setText(selector, value, fallback) {
+  if (value === null || value === undefined || value === '') return;
+  const el = document.querySelector(selector);
+  if (el) el.textContent = value;
+}
+
+// ── Utility: update Chart.js canvas data point ──
+function updateChartPoint(canvasId, datasetIndex, pointIndex, value) {
+  if (value === null) return;
+  try {
+    const chart = Chart.getChart(canvasId);
+    if (chart) {
+      chart.data.datasets[datasetIndex].data[pointIndex] = value;
+      chart.update('none');
+    }
+  } catch(e) {}
+}
+
+// ── Utility: show/hide mock badge on a card ──
+function setMockBadge(fieldKey, isMock) {
+  const badge = document.querySelector(`[data-field="${fieldKey}"] .mock-badge`);
+  const kpiBadge = document.querySelector(`[data-field="${fieldKey}"] .mock-kpi`);
+  if (badge) badge.style.display = isMock ? '' : 'none';
+  if (kpiBadge) kpiBadge.style.display = isMock ? '' : 'none';
+}
+
+// ══════════════════════════════════════
+//  MAIN: Load data and update dashboard
+// ══════════════════════════════════════
+async function loadGoogleSheetsData() {
+
+  // ── 1. Fetch Report Control tab ──
+  const ctrl = await fetchSheet('Report Control');
+  if (ctrl && ctrl.table && ctrl.table.rows.length > 2) {
+    // Row index 2 = row 3 in sheet (0-indexed), which is the label row
+    // Row index 3 = row 4 = the values row (but accounting for title/sub rows)
+    // The values are in row 5 of the sheet = index 4
+    const rows = ctrl.table.rows;
+    // Find the value row — it's the one after the header row
+    // Header row has "Active Quarter" text, value row has e.g. "Q2 2026"
+    let activeQuarter = null;
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r.c || !r.c[0] || !r.c[0].v) continue;
+      const v = String(r.c[0].v);
+      // Match pattern like "Q1 2026", "Q2 2026" etc
+      if (/^Q[1-4]\s+20\d{2}/.test(v.trim())) {
+        activeQuarter = v.trim();
+        break;
+      }
+    }
+
+    if (activeQuarter) {
+      // Update spotlight eyebrow
+      const eyebrow = document.querySelector('.sp-eyebrow');
+      if (eyebrow) {
+        eyebrow.innerHTML = `<div class="sp-dot"></div> Current Moment — ${activeQuarter} Year-to-Date`;
+      }
+      // Update header period / footer
+      document.querySelectorAll('.hd-period, .hd-sub').forEach(el => {
+        if (el.textContent.includes('2026') || el.textContent.includes('Q')) {
+          el.textContent = activeQuarter;
+        }
+      });
+      // Update footer
+      const footer = document.querySelector('footer div:first-child strong');
+      if (footer && footer.nextSibling) {
+        footer.parentElement.innerHTML = `<strong>ESO Executive Performance Overview</strong> · ${activeQuarter}`;
+      }
+      // Update header date
+      document.querySelectorAll('.hd-right div').forEach(el => {
+        if (/April|January|July|October/.test(el.textContent) || /20\d\d/.test(el.textContent)) {
+          if (!el.textContent.includes('CONFIDENTIAL') && !el.querySelector('span')) {
+            const qMap = {'Q1':'April','Q2':'July','Q3':'October','Q4':'January'};
+            const q = activeQuarter.split(' ')[0];
+            const yr = activeQuarter.split(' ')[1];
+            el.textContent = (qMap[q] || '') + ' ' + yr;
+          }
+        }
+      });
+    }
+  }
+
+  // ── 2. Fetch Dashboard Data tab ──
+  const data = await fetchSheet('Dashboard Data');
+  if (!data || !data.table) {
+    console.warn('ESO Dashboard: Dashboard Data sheet not available');
+    showConnectionStatus(false);
+    return;
+  }
+
+  const table = data.table;
+  const cols = table.cols;
+  const rows = table.rows;
+
+  // Find column indices
+  // Fixed cols: A=FieldKey(0), B=Section(1), C=Metric(2), D=Freq(3), E=Owner(4), F=Source(5), G=Mock(6)
+  // Then period columns start at index 7
+  // Period headers are in row 4 of sheet — we need to identify the ACTIVE column
+  // Row indices: 0=title, 1=sub, 2=spacer, 3=headers, 4=locked indicator, 5+=data
+
+  // Find header row (row index 3 in sheet = array index 3)
+  let headerRowIdx = -1;
+  for (let i = 0; i < Math.min(rows.length, 6); i++) {
+    const r = rows[i];
+    if (!r.c) continue;
+    // Header row has "Field" or "Key" in first cell
+    const v = r.c[0] && r.c[0].v ? String(r.c[0].v) : '';
+    if (v.includes('Field') || v.includes('Key')) { headerRowIdx = i; break; }
+  }
+
+  // Build period column map from header row
+  const periodCols = {};  // {periodName: colIndex}
+  let activePeriodCol = -1;
+  if (headerRowIdx >= 0) {
+    const hRow = rows[headerRowIdx];
+    for (let c = 7; c < (hRow.c || []).length; c++) {
+      const cell = hRow.c[c];
+      if (!cell || !cell.v) continue;
+      const v = String(cell.v).replace('★ ACTIVE','').replace('\n','').trim();
+      periodCols[v] = c;
+      if (String(cell.v).includes('ACTIVE') || String(cell.v).includes('Active')) {
+        activePeriodCol = c;
+      }
+    }
+  }
+
+  // If no active col found, use the first period col after historical (col index 11 = Q1 2026)
+  if (activePeriodCol === -1) activePeriodCol = 11;
+
+  // Build field map: fieldKey → {mock: bool, activeValue: string, allValues: {period: value}}
+  const fields = {};
+  // Data rows start after header + indicator rows
+  const dataStartIdx = headerRowIdx >= 0 ? headerRowIdx + 2 : 5;
+
+  for (let i = dataStartIdx; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r.c || !r.c[0] || !r.c[0].v) continue;
+    const key = String(r.c[0].v).trim();
+    if (!key || key === 'Field' || key === 'Field\nKey') continue;
+
+    const mockCell = r.c[6];
+    const isMock = mockCell && mockCell.v && String(mockCell.v).trim().toUpperCase() === 'Y';
+
+    // Active period value
+    let activeVal = null;
+    if (activePeriodCol >= 0 && r.c[activePeriodCol]) {
+      activeVal = cellVal(r.c[activePeriodCol]);
+    }
+
+    // All period values
+    const allVals = {};
+    for (const [pName, pCol] of Object.entries(periodCols)) {
+      if (r.c[pCol]) allVals[pName] = cellVal(r.c[pCol]);
+    }
+
+    fields[key] = { mock: isMock, active: activeVal, periods: allVals };
+  }
+
+  // ── 3. Apply values to dashboard ──
+  applyFieldsToDashboard(fields);
+
+  // ── 4. Show connection status ──
+  showConnectionStatus(true, Object.keys(fields).length);
+}
+
+function applyFieldsToDashboard(f) {
+
+  // Helper: get active value for a field key
+  const v = (key) => f[key] ? f[key].active : null;
+  const n = (key) => toNum(v(key));
+
+  // ── SPOTLIGHT KPIs ──
+  // Revenue Confirmed (S1 = R3 floor + active pipeline)
+  const totalConfirmed = n('R1') && n('R2') ? (n('R1') + n('R2') + (n('R4') || 0) + (n('R5') || 0)) : null;
+  if (totalConfirmed) {
+    document.querySelectorAll('.kpi-val').forEach((el, i) => {
+      if (el.textContent.includes('1.595') || el.textContent.includes('1,595')) {
+        el.textContent = fmtCurrency(totalConfirmed);
+      }
+    });
+  }
+
+  // Net Income YTD (S2)
+  const netIncome = v('F2');
+  if (netIncome !== null) {
+    document.querySelectorAll('.kpi-val').forEach(el => {
+      if (el.textContent.trim() === '$0' || el.textContent.includes('71K')) {
+        const parent = el.closest('.kpi');
+        if (parent && parent.querySelector('.kpi-lbl') && 
+            parent.querySelector('.kpi-lbl').textContent.includes('Net Income')) {
+          el.textContent = fmtCurrency(toNum(netIncome)) || '$0';
+        }
+      }
+    });
+  }
+
+  // Capital Deployed (S5)
+  const capDeployed = v('P1');
+  if (capDeployed !== null) {
+    document.querySelectorAll('.kpi-val').forEach(el => {
+      const parent = el.closest('.kpi');
+      if (parent && parent.querySelector('.kpi-lbl') && 
+          parent.querySelector('.kpi-lbl').textContent.includes('Capital')) {
+        el.textContent = fmtCurrency(toNum(capDeployed)) || el.textContent;
+      }
+    });
+  }
+
+  // ── FINANCIAL CHART (cRevenue) ──
+  const revQ1 = n('F1');
+  const niQ1  = n('F2');
+  if (revQ1 !== null) updateChartPoint('cRevenue', 0, 4, revQ1);
+  if (niQ1  !== null) updateChartPoint('cRevenue', 1, 4, niQ1);
+
+  // ── OKR GAUGE ──
+  const okrQ1  = n('O1');
+  const okrTgt = n('O2');
+  if (okrQ1 !== null) {
+    // Update center number
+    document.querySelectorAll('[style*="font-size:32px"]').forEach(el => {
+      if (el.textContent.includes('%') && !el.textContent.includes('above')) {
+        el.textContent = Math.round(okrQ1) + '%';
+      }
+    });
+    // Update gauge chart
+    const target = okrTgt || 80;
+    const markerW = 1.5;
+    const chart = Chart.getChart('cOKR');
+    if (chart) {
+      chart.data.datasets[0].data = [
+        target - markerW/2,
+        markerW,
+        okrQ1 - target - markerW/2,
+        100 - okrQ1
+      ];
+      chart.update('none');
+    }
+    // Update above/below target label
+    const diff = okrQ1 - target;
+    document.querySelectorAll('[style*="color:var(--green)"]').forEach(el => {
+      if (el.textContent.includes('above target') || el.textContent.includes('below target')) {
+        if (diff >= 0) {
+          el.textContent = `▲ ${diff.toFixed(0)}% above target`;
+          el.style.color = 'var(--green)';
+        } else {
+          el.textContent = `▼ ${Math.abs(diff).toFixed(0)}% below target`;
+          el.style.color = '#FF8A8A';
+        }
+      }
+    });
+    // Update bottom rows
+    document.querySelectorAll('.fin-row').forEach(el => {
+      const lbl = el.querySelector('.fl');
+      const val = el.querySelector('.fv');
+      if (!lbl || !val) return;
+      if (lbl.textContent.includes('Q1 2026 Actual') || lbl.textContent.includes('Q') && lbl.textContent.includes('Actual')) {
+        val.textContent = Math.round(okrQ1) + '%';
+      }
+      if (lbl.textContent.includes('Annual Target')) {
+        val.textContent = Math.round(target) + '%';
+      }
+    });
+  }
+
+  // ── REVENUE GOAL PANEL ──
+  const revGoal  = n('F4');
+  const newGoal  = n('R3');
+  const pipeline = n('R6');
+  const prodSales = n('R4');
+  const grantInc  = n('R5');
+  const contracts = v('R7');
+
+  if (revGoal) {
+    document.querySelectorAll('[style*="font-size:38px"]').forEach(el => {
+      if (el.textContent.includes('3,166') || el.textContent.includes('3.166')) {
+        el.textContent = fmtCurrency(revGoal);
+      }
+    });
+  }
+  if (pipeline) {
+    document.querySelectorAll('[style*="font-size:16px"]').forEach(el => {
+      if (el.textContent.includes('1,861') || el.textContent.includes('1.86')) {
+        el.textContent = fmtCurrency(pipeline);
+      }
+    });
+  }
+  if (prodSales) {
+    document.querySelectorAll('[style*="font-size:13px"]').forEach(el => {
+      if (el.textContent.includes('54,000') || el.textContent.includes('54K')) {
+        el.textContent = fmtCurrency(prodSales);
+      }
+    });
+  }
+  if (grantInc) {
+    document.querySelectorAll('[style*="font-size:13px"]').forEach(el => {
+      if (el.textContent.includes('300,000') || el.textContent.includes('300K')) {
+        el.textContent = fmtCurrency(grantInc);
+      }
+    });
+  }
+
+  // ── FUND PERFORMANCE ──
+  const cumCapital = n('P2');
+  const delinquency = v('P6');
+  if (cumCapital) {
+    document.querySelectorAll('.v').forEach(el => {
+      if (el.textContent.includes('8.19') || el.textContent.includes('8,185')) {
+        el.textContent = fmtCurrency(cumCapital);
+      }
+    });
+  }
+  if (delinquency) {
+    document.querySelectorAll('.fund-val, div').forEach(el => {
+      if (el.textContent.trim() === '<5%' && !el.children.length) {
+        el.textContent = delinquency;
+      }
+    });
+  }
+
+  // ── CAPITAL DEPLOYED CHART ──
+  const capP1 = n('P1');
+  if (capP1 !== null) updateChartPoint('cCapital', 0, 4, capP1);
+
+  // ── MOCK BADGES — show/hide based on Mock? column ──
+  Object.entries(f).forEach(([key, data]) => {
+    // Find elements with data-field attribute
+    const els = document.querySelectorAll(`[data-field="${key}"]`);
+    els.forEach(el => {
+      const badge = el.querySelector('.mock-badge');
+      if (badge) badge.style.display = data.mock ? '' : 'none';
+    });
+  });
+
+  // ── Spotlight mock badges ──
+  // Entrepreneurs Served
+  const entServed = v('O8');
+  if (entServed) {
+    document.querySelectorAll('.kpi').forEach(el => {
+      const lbl = el.querySelector('.kpi-lbl');
+      const val = el.querySelector('.kpi-val');
+      if (lbl && lbl.textContent.includes('Entrepreneurs')) {
+        if (val && val.textContent.includes('Pending') && entServed) {
+          val.textContent = entServed;
+          val.style = '';
+          const badge = el.querySelector('.mock-badge');
+          if (badge) badge.remove();
+          const delta = el.querySelector('.kpi-delta');
+          if (delta) { delta.textContent = 'Q1 2026 YTD'; delta.style = ''; }
+        }
+      }
+    });
+  }
+}
+
+// ── Status indicator in footer ──
+function showConnectionStatus(connected, fieldCount) {
+  const footer = document.querySelector('footer');
+  if (!footer) return;
+  const existing = document.getElementById('sheets-status');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'sheets-status';
+  div.style.cssText = 'font-size:10px; color:rgba(255,255,255,0.35); margin-top:4px;';
+  div.textContent = connected
+    ? `✓ Live data · Google Sheets · ${fieldCount} fields · ${new Date().toLocaleTimeString()}`
+    : '⚠ Showing cached data · Google Sheets unavailable';
+  div.style.color = connected ? 'rgba(82,184,86,0.6)' : 'rgba(255,180,60,0.5)';
+  footer.appendChild(div);
+}
+
+// ── Run on page load (after lock screen if present) ──
+// Wait for charts to initialize first
+window.addEventListener('load', () => {
+  setTimeout(loadGoogleSheetsData, 800);
+});
+</script>
+
 </body>
 </html>
