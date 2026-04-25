@@ -1235,43 +1235,44 @@ function parseGviz(text) {
   } catch(e) { return null; }
 }
 
-// ── Utility: fetch a sheet tab as parsed gviz data ──
-async function fetchSheet(tabName) {
-  // Try gviz/tq endpoint (requires sheet published to web)
-  const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}&headers=0`;
-  try {
-    const resp = await fetch(gvizUrl, { cache: 'no-store' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const text = await resp.text();
-    if (text.includes('Invalid') || text.includes('error') || text.length < 50) throw new Error('Bad response');
-    const parsed = parseGviz(text);
-    if (parsed && parsed.table) return parsed;
-    throw new Error('Parse failed');
-  } catch(e) {
-    console.warn('ESO Dashboard: gviz fetch failed for', tabName, '-', e.message);
-  }
+// ── Published CSV base URL (from Google Sheets > File > Publish to Web) ──
+const PUB_BASE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2QlMNDKY3UboK_ttYooULzwEl6PLauQF_k0cuBxMyVbCYlfHW4LBHGLlPZsOj1psxhmHAX7shk4OV/pub?output=csv&sheet=";
 
-  // Fallback: try CSV export
-  const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(tabName)}`;
+// ── Utility: fetch a sheet tab as CSV rows ──
+async function fetchSheet(tabName) {
+  const url = PUB_BASE + encodeURIComponent(tabName);
+  console.log('ESO Dashboard: Fetching', tabName, 'from', url);
   try {
-    const resp = await fetch(csvUrl, { cache: 'no-store' });
+    const resp = await fetch(url, { cache: 'no-store' });
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const text = await resp.text();
-    if (text.includes('<!DOCTYPE') || text.length < 10) throw new Error('Got HTML not CSV');
-    return { _csv: text, table: csvToTable(text) };
+    if (!text || text.trim().startsWith('<!')) throw new Error('Got HTML instead of CSV');
+    console.log('ESO Dashboard: Got CSV for', tabName, '- length:', text.length);
+    return { table: csvToTable(text) };
   } catch(e) {
-    console.warn('ESO Dashboard: CSV fetch also failed for', tabName, '-', e.message);
+    console.warn('ESO Dashboard: Fetch failed for', tabName, '-', e.message);
     return null;
   }
 }
 
-// ── Utility: parse CSV text into a gviz-like table ──
+// ── Utility: parse CSV into row/cell structure ──
 function csvToTable(csv) {
-  const lines = csv.split('\n').filter(l => l.trim());
-  const rows = lines.map(line => {
-    const cells = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
-    return { c: cells.map(v => ({ v: v || null })) };
-  });
+  const rows = [];
+  // Handle quoted fields with commas inside
+  const lines = csv.split(/\r?\n/);
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cells = [];
+    let inQuote = false, cur = '';
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQuote = !inQuote; }
+      else if (ch === ',' && !inQuote) { cells.push({ v: cur.trim() || null }); cur = ''; }
+      else { cur += ch; }
+    }
+    cells.push({ v: cur.trim() || null });
+    rows.push({ c: cells });
+  }
   return { cols: [], rows };
 }
 
