@@ -1,9 +1,11 @@
 
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ESO Ventures — Board Dashboard Q1 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;family=Instrument+Serif:ital@0;1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
@@ -207,6 +209,138 @@ footer strong { color: #fff; }
 .fin-row .fl { font-size: 12px; color: var(--text2); }
 .fin-row .fv { font-size: 16px; font-weight: 700; color: var(--navy); }
 .fin-row .fv.green { color: var(--green); }
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — TABLET (max 1024px)
+══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .hd { padding: 16px 24px; }
+  .sec { padding: 24px 24px 0; }
+  .spotlight { padding: 32px 24px 28px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .row-2l   { grid-template-columns: 1fr; }
+  .row-3    { grid-template-columns: 1fr 1fr; }
+  .row-4    { grid-template-columns: repeat(2, 1fr); }
+  .row-2eq  { grid-template-columns: 1fr; }
+  .log-section { margin: 24px 24px 0; }
+  footer { padding: 14px 24px; flex-direction: column; gap: 6px; text-align: center; }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — MOBILE (max 768px)
+══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Header */
+  .hd {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .hd-logo img { height: 36px !important; }
+  .hd-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  .hd-right button {
+    padding: 7px 14px !important;
+    font-size: 11px !important;
+  }
+
+  /* Mock banner */
+  .mock-banner { padding: 8px 16px; font-size: 11px; }
+
+  /* Spotlight */
+  .spotlight { padding: 24px 16px 20px; }
+  .spotlight > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .sp-headline { font-size: 18px !important; }
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .kpi { padding: 14px 12px 12px; }
+  .kpi-val { font-size: 26px; }
+
+  /* Sections */
+  .sec { padding: 20px 16px 0; }
+  .sec-hd { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sec-title { font-size: 20px !important; }
+  .sec-note { text-align: left; font-size: 11px; }
+
+  /* All grids → single column */
+  .row-2l,
+  .row-3,
+  .row-4,
+  .row-2eq { grid-template-columns: 1fr !important; }
+
+  /* Cards */
+  .card { padding: 16px; }
+  .big-card { padding: 14px 10px; }
+  .big-n { font-size: 32px; }
+
+  /* Charts — let them breathe */
+  .chart-wrap canvas { max-height: 220px; }
+
+  /* OKR gauge — center it */
+  .okr-wrap { align-items: center; }
+
+  /* Stat pairs */
+  .stat-pair { grid-template-columns: 1fr 1fr; }
+
+  /* Revenue breakdown panel */
+  .spotlight > div,
+  [style*="grid-template-columns:420px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Milestones */
+  .ms { flex-wrap: wrap; }
+  .ms-tag { margin-top: 4px; }
+
+  /* Pill row — wrap */
+  .pill-row { flex-wrap: wrap; }
+  .pill, .pill-off { font-size: 10px; padding: 3px 8px; }
+
+  /* Fund repayment bars */
+  .rep-yr { width: 40px; font-size: 11px; }
+  .rep-pct { font-size: 12px; }
+
+  /* Footer */
+  footer {
+    padding: 14px 16px;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  /* Log section */
+  .log-section { margin: 20px 16px 0; padding: 20px 14px; }
+  table.log { font-size: 11px; }
+  .log thead tr th,
+  .log tbody tr td { padding: 7px 8px; }
+
+  /* Revenue dark panel */
+  [style*="grid-template-columns:1fr 1fr"][style*="gap:16px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE (max 480px)
+══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-val { font-size: 32px; }
+  .sp-headline { font-size: 16px !important; }
+  .stat-pair { grid-template-columns: 1fr; }
+  .hd-right button { width: 100%; justify-content: center; }
+  .sec-title { font-size: 18px !important; letter-spacing: 1.5px !important; }
+  .big-n { font-size: 28px; }
+  .rep-bar-wrap { margin: 0 8px; }
+  .fund-performance-grid { grid-template-columns: 1fr !important; }
+}
+
 </style>
 </head>
 <body>
@@ -220,7 +354,22 @@ footer strong { color: #fff; }
     <div class="hd-title">ESO Executive Performance Overview</div>
   </div>
   <div class="hd-right" style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
-    <button onclick="downloadDashboard()" style="background: rgb(82, 184, 86); color: rgb(255, 255, 255); border: none; padding: 9px 18px; border-radius: 7px; font-family: &quot;Plus Jakarta Sans&quot;, sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; letter-spacing: 0.3px; transition: background 0.15s;" onmouseover="this.style.background='#52B856'" onmouseout="this.style.background='#52B856'">
+    <button onclick="downloadDashboard()" style="
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 7px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      letter-spacing: 0.3px;
+      transition: background 0.15s;
+    " onmouseover="this.style.background='#52B856'" onmouseout="this.style.background='#52B856'">
       ⬇ Download HTML
     </button>
     <div style="font-size:10px; color:rgba(255,255,255,0.4);">April 2026 &nbsp;·&nbsp; <span style="color:var(--gold); font-weight:700;">⚑ MOCKUP</span></div>
@@ -267,7 +416,7 @@ footer strong { color: #fff; }
       <div class="mock-badge">⚑ MOCK</div>
       <div class="kpi-lbl">Entrepreneurs Served</div>
       <div class="kpi-val" style="font-size:24px; color:rgba(255,255,255,0.4);">Pending</div>
-      <div class="kpi-note">Aggregating from Airtable, Incubation &amp; Webinars · 3 sources</div>
+      <div class="kpi-note">Aggregating from Airtable, Incubation & Webinars · 3 sources</div>
       <div class="kpi-delta" style="background:rgba(184,66,66,0.2);color:#FFAAAA;">⚑ Data in Progress</div>
     </div>
     <div class="kpi">
@@ -288,12 +437,12 @@ footer strong { color: #fff; }
   </div>
   <div class="row row-2l">
     <div class="card">
-      <div class="card-ttl">Revenue &amp; Net Income — Annual Arc (2022–2025 + Q1 2026 YTD)</div>
-      <div class="chart-wrap" style="height:270px"><canvas id="cRevenue" width="1844" height="540" style="display: block; box-sizing: border-box; height: 270px; width: 922px;"></canvas></div>
+      <div class="card-ttl">Revenue & Net Income — Annual Arc (2022–2025 + Q1 2026 YTD)</div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cRevenue"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Net Margin % by Year</div>
-      <div class="chart-wrap" style="height:180px"><canvas id="cMargin" width="1199" height="360" style="display: block; box-sizing: border-box; height: 180px; width: 599px;"></canvas></div>
+      <div class="chart-wrap" style="height:180px"><canvas id="cMargin"></canvas></div>
       <div style="margin-top:14px">
         <div class="fin-row"><span class="fl">2025 Net Income</span><span class="fv green">$642,759</span></div>
         <div class="fin-row"><span class="fl">2025 Net Margin</span><span class="fv green">22.0%</span></div>
@@ -314,7 +463,7 @@ footer strong { color: #fff; }
   <div class="row row-3">
     <div class="card">
       <div class="card-ttl">Revenue per FTE — Efficiency Trajectory</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cFTE" width="972" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 486px;"></canvas></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cFTE"></canvas></div>
       <div style="margin-top:12px">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">2025 Rev / FTE</span><span class="fv green">$149,976</span></div>
         <div class="fin-row"><span class="fl" style="color:var(--text3)">2026 Projected</span><span class="fv" style="color:var(--gold)">$287,818</span></div>
@@ -324,7 +473,7 @@ footer strong { color: #fff; }
       <div class="card-ttl">OKR Attainment</div>
       <div class="okr-wrap">
         <div style="position:relative; width:200px; height:180px; margin:0 auto;">
-          <canvas id="cOKR" style="position: absolute; top: 0px; left: 20px; width: 180px; height: 180px; display: block; box-sizing: border-box;" width="360" height="360"></canvas>
+          <canvas id="cOKR" style="position:absolute;top:0;left:20px;width:160px;height:160px;"></canvas>
 
           <!-- Center label -->
           <div style="position:absolute;top:0;left:20px;width:160px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:20px;">
@@ -348,7 +497,7 @@ footer strong { color: #fff; }
     </div>
     <div class="card">
       <div class="card-ttl">Cost per Entrepreneur Served</div>
-      <div class="chart-wrap" style="height:200px"><canvas id="cCost" width="972" height="400" style="display: block; box-sizing: border-box; height: 200px; width: 486px;"></canvas></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cCost"></canvas></div>
       <div style="margin-top:12px">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--text2); font-weight:600">2025 Actual</span><span class="fv" style="color:var(--navy)">$7,320 · Proj. $4,273 by 2027</span></div>
       </div>
@@ -506,16 +655,16 @@ footer strong { color: #fff; }
   </div>
   <div class="row row-3">
     <div class="card">
-      <div class="card-ttl">Capital Deployed — Annual &amp; Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cCapital" width="972" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 486px;"></canvas></div>
+      <div class="card-ttl">Capital Deployed — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cCapital"></canvas></div>
       <div class="stat-pair">
         <div class="stat-box"><div class="v">$8.19M</div><div class="l">Total through 2025</div></div>
         <div class="stat-box gold-box"><div class="v">$8.39M</div><div class="l">Est. through Q1 '26</div></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-ttl">Businesses Funded — Annual &amp; Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cBizFunded" width="972" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 486px;"></canvas></div>
+      <div class="card-ttl">Businesses Funded — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cBizFunded"></canvas></div>
       <div class="stat-pair">
         <div class="stat-box"><div class="v">191</div><div class="l">Funded through 2025</div></div>
         <div class="stat-box gold-box"><div class="v">⚑ TBD</div><div class="l">Q1 '26 · Need from Lending</div></div>
@@ -556,23 +705,23 @@ footer strong { color: #fff; }
   <div class="row row-2eq">
     <div class="card mock">
       <div class="mock-badge">⚑ MOCK</div>
-      <div class="card-ttl">Systems &amp; Technology Stack <span class="ctag">CONFIRM</span></div>
+      <div class="card-ttl">Systems & Technology Stack <span class="ctag">CONFIRM</span></div>
       <div class="milestones">
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">Airtable CRM</div><div class="ms-date">Entrepreneur lifecycle management · Live Q2 2024</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">ESO HUB</div><div class="ms-date">Entrepreneur engagement hub · Live</div></div><span class="ms-tag live">Live</span></div>
 
-        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">LenderFit</div><div class="ms-date">Lending &amp; capital deployment platform · Live</div></div><span class="ms-tag live">Live</span></div>
+        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">LenderFit</div><div class="ms-date">Lending & capital deployment platform · Live</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">Down Home</div><div class="ms-date">Community engagement platform · Live</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms" style="background:linear-gradient(135deg, #081009 0%, #0C1A0E 100%); border: 1px solid rgba(82,184,86,0.4);">
           <div class="ms-icon live" style="background:rgba(82,184,86,0.2); color:#72D476; font-size:16px;">✦</div>
           <div class="ms-body">
-            <div class="ms-name" style="color:#FFFFFF; font-size:14px; font-weight:700;">Agentic AI — Armando &amp; Maya</div>
-            <div class="ms-date" style="color:rgba(255,255,255,0.5);">AI-powered intake, qualification &amp; entrepreneur engagement · Live Q1 2025</div>
+            <div class="ms-name" style="color:#FFFFFF; font-size:14px; font-weight:700;">Agentic AI — Armando & Maya</div>
+            <div class="ms-date" style="color:rgba(255,255,255,0.5);">AI-powered intake, qualification & entrepreneur engagement · Live Q1 2025</div>
           </div>
           <span class="ms-tag live" style="background:rgba(82,184,86,0.2); color:#72D476; border:1px solid rgba(82,184,86,0.4);">Live</span>
         </div>
         <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Realtime Insights Platform</div><div class="ms-date">Unified data infrastructure · ETA Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
-        <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Automated Reporting</div><div class="ms-date">Board &amp; program reporting · WIP Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
+        <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Automated Reporting</div><div class="ms-date">Board & program reporting · WIP Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
       </div>
     </div>
     <div class="card mock">
@@ -880,6 +1029,5 @@ function downloadPDF() {
   }, 1500);
 }
 </script>
-
-
-</body></html>
+</body>
+</html>
