@@ -1307,14 +1307,25 @@ function setText(selector, value, fallback) {
 
 // ── Utility: update Chart.js canvas data point ──
 function updateChartPoint(canvasId, datasetIndex, pointIndex, value) {
-  if (value === null) return;
-  try {
-    const chart = Chart.getChart(canvasId);
-    if (chart) {
-      chart.data.datasets[datasetIndex].data[pointIndex] = value;
-      chart.update('none');
-    }
-  } catch(e) {}
+  if (value === null || value === undefined) return;
+  const attempt = () => {
+    try {
+      const chart = Chart.getChart(canvasId);
+      if (chart) {
+        chart.data.datasets[datasetIndex].data[pointIndex] = value;
+        chart.update();
+        console.log(`ESO Dashboard: Updated chart ${canvasId}[${datasetIndex}][${pointIndex}] = ${value}`);
+        return true;
+      }
+    } catch(e) { console.warn('ESO Dashboard: Chart update error', canvasId, e); }
+    return false;
+  };
+  if (!attempt()) {
+    // Retry after charts fully initialize
+    setTimeout(() => {
+      if (!attempt()) setTimeout(attempt, 1000);
+    }, 500);
+  }
 }
 
 // ── Utility: show/hide mock badge on a card ──
@@ -1458,10 +1469,20 @@ async function loadGoogleSheetsData() {
     fields[key] = { mock: isMock, active: activeVal, periods: allVals };
   }
 
-  // ── 3. Apply values to dashboard ──
+  // ── 3. Debug: log what we found ──
+  console.log('ESO Dashboard: Fields loaded:', Object.keys(fields).length);
+  console.log('ESO Dashboard: Active period column:', activePeriodCol);
+  console.log('ESO Dashboard: Period columns found:', periodCols);
+  Object.entries(fields).forEach(([k,v]) => {
+    if (v.active !== null && v.active !== undefined) {
+      console.log(`ESO Dashboard: ${k} = ${v.active} (mock: ${v.mock})`);
+    }
+  });
+
+  // ── 4. Apply values to dashboard ──
   applyFieldsToDashboard(fields);
 
-  // ── 4. Show connection status ──
+  // ── 5. Show connection status ──
   showConnectionStatus(true, Object.keys(fields).length);
 }
 
@@ -1673,7 +1694,7 @@ function showConnectionStatus(connected, fieldCount) {
 // ── Run on page load (after lock screen if present) ──
 // Wait for charts to initialize first
 window.addEventListener('load', () => {
-  setTimeout(loadGoogleSheetsData, 800);
+  setTimeout(loadGoogleSheetsData, 1500);
 });
 </script>
 
