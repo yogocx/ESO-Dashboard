@@ -1,10 +1,295 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.13/html-to-image.min.js" integrity="sha512-iZ2ORl595Wx6miw+GuadDet4WQbdSWS3JLMoNfY8cRGoEFy6oT3G9IbcrBeL6AfkgpA51ETt/faX6yLV+/gFJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+      (function() {
+        const originalConsole = window.console;
+        window.console = {
+          log: (...args) => {
+            originalConsole.log(...args);
+            window.parent.postMessage({ type: 'console', message: args.join(' ') }, '*');
+          },
+          error: (...args) => {
+            originalConsole.error(...args);
+            window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(' ') }, '*');
+          },
+          warn: (...args) => {
+            originalConsole.warn(...args);
+            window.parent.postMessage({ type: 'console', message: 'Warning: ' + args.join(' ') }, '*');
+          }
+        };
+
+        let requestId = 0;
+        let callbacksMap = new Map();
+        let streamControllers = new Map();
+        
+        window.claude = {
+          complete: (prompt) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'claudeComplete', id, prompt }, '*');
+            });
+          }
+        };
+
+        window.storage = {
+          get: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageGet', id, key, shared }, '*');
+            });
+          },
+          set: (key, value, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageSet', id, key, value, shared }, '*');
+            });
+          },
+          delete: (key, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageDelete', id, key, shared }, '*');
+            });
+          },
+          list: (prefix, shared = false) => {
+            return new Promise((resolve, reject) => {
+              const id = requestId++;
+              callbacksMap.set(id, { resolve, reject });
+              window.parent.postMessage({ type: 'storageList', id, prefix, shared }, '*');
+            });
+          }
+        };
+
+        let pendingBlobs = new Map();
+        URL.createObjectURL = (blob) => {
+          // Store the blob and create an ID and URL for it
+          const blobId = `blob-${Date.now()}-${Math.random()}`;
+          pendingBlobs.set(blobId, blob);
+          return `blob-request://${blobId}`;
+        };
+
+        URL.revokeObjectURL = (url) => {
+          // Remove the blob from our store
+          const blobId = url.replace("blob-request://", "");
+          pendingBlobs.delete(blobId);
+        };
+
+        const getBlobFromURL = (url) => {
+          const blobId = url.replace("blob-request://", "");
+          return pendingBlobs.get(blobId);
+        };
+
+        // Override global fetch with streaming support
+        window.fetch = (url, init = {}) => {
+          return new Promise((resolve, reject) => {
+            const id = requestId++;
+            const channelId = `fetch-${id}-${Date.now()}`;
+            
+            callbacksMap.set(id, { 
+              resolve: (response) => {
+                // Create a ReadableStream for the response body
+                const stream = new ReadableStream({
+                  start(controller) {
+                    streamControllers.set(channelId, controller);
+                  },
+                  cancel() {
+                    streamControllers.delete(channelId);
+                  }
+                });
+                
+                // Create and return the Response with the stream
+                resolve(new Response(stream, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers: response.headers
+                }));
+              },
+              reject,
+              channelId
+            });
+            
+            window.parent.postMessage({
+              type: 'proxyFetch',
+              id,
+              url,
+              init,
+              channelId
+            }, '*');
+          });
+        };
+
+        window.addEventListener('message', async (event) => {
+          if (event.data.type === 'takeScreenshot') {
+            const rootElement = document.getElementById('artifacts-component-root-html');
+            if (!rootElement) {
+              window.parent.postMessage({
+                type: 'screenshotError',
+                error: new Error('Root element not found'),
+              }, '*');
+            }
+            const screenshot = await htmlToImage.toPng(rootElement, {
+              imagePlaceholder:
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjePDgwX8ACOQDoNsk0PMAAAAASUVORK5CYII=",
+            });
+            window.parent.postMessage({
+              type: 'screenshotData',
+              data: screenshot,
+            }, '*');
+          } else if (event.data.type === 'claudeComplete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.completion);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'proxyFetchResponse') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+              callbacksMap.delete(event.data.id);
+            } else {
+              // Initial response with headers, status, etc.
+              callback.resolve({
+                status: event.data.status,
+                statusText: event.data.statusText,
+                headers: event.data.headers
+              });
+              // Don't delete the callback yet if streaming
+              if (!event.data.body) {
+                callbacksMap.delete(event.data.id);
+              }
+            }
+          } else if (event.data.type === 'proxyFetchStream') {
+            // Handle streaming data chunks
+            const controller = streamControllers.get(event.data.channelId);
+            if (controller) {
+              if (event.data.error) {
+                controller.error(new Error(event.data.error));
+                streamControllers.delete(event.data.channelId);
+              } else if (event.data.done) {
+                controller.close();
+                streamControllers.delete(event.data.channelId);
+                // Clean up the callback
+                const callback = Array.from(callbacksMap.entries()).find(
+                  ([_, value]) => value.channelId === event.data.channelId
+                );
+                if (callback) {
+                  callbacksMap.delete(callback[0]);
+                }
+              } else if (event.data.chunk) {
+                controller.enqueue(new Uint8Array(event.data.chunk));
+              }
+            }
+          } else if (event.data.type === 'storageGet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageSet') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageDelete') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          } else if (event.data.type === 'storageList') {
+            const callback = callbacksMap.get(event.data.id);
+            if (event.data.error) {
+              callback.reject(new Error(event.data.error));
+            } else {
+              callback.resolve(event.data.result);
+            }
+            callbacksMap.delete(event.data.id);
+          }
+        });
+
+        window.addEventListener('click', (event) => {
+          const isEl = event.target instanceof HTMLElement;
+          if (!isEl) return;
+    
+          // find ancestor links
+          const linkEl = event.target.closest("a");
+          if (!linkEl || !linkEl.href) return;
+    
+          event.preventDefault();
+          event.stopImmediatePropagation();
+    
+          if (linkEl.href.startsWith("blob-request:")) {
+            const blob = getBlobFromURL(linkEl.href);
+            if (!blob) return;
+            void blob.arrayBuffer().then((data) => {
+              window.parent.postMessage({
+                type: "downloadFile",
+                filename: linkEl.download,
+                data,
+                mimeType: blob.type || "application/octet-stream",
+              });
+            });
+          } else if (linkEl.href.startsWith("data:")) {
+            const [header, base64Data] = linkEl.href.split(",");
+            const mimeMatch = header.match(/data:([^;]+)/);
+            const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+            const binaryString = atob(base64Data);
+            const data = Uint8Array.from(binaryString, (c) =>
+              c.charCodeAt(0),
+            ).buffer;
+            window.parent.postMessage({
+              type: "downloadFile",
+              filename: linkEl.download,
+              data,
+              mimeType,
+            });
+          } else {
+            let linkUrl;
+            try {
+              linkUrl = new URL(linkEl.href);
+            } catch (error) {
+              return;
+            }
+    
+            if (linkUrl.hostname === window.location.hostname) return;
+      
+            window.parent.postMessage({
+              type: 'openExternal',
+              href: linkEl.href,
+            }, '*');
+          }
+      });
+
+        const originalOpen = window.open;
+        window.open = function (url) {
+          window.parent.postMessage({
+            type: "openExternal",
+            href: url,
+          }, "*");
+        };
+
+        window.addEventListener('error', (event) => {
+          window.parent.postMessage({ type: 'console', message: 'Uncaught Error: ' + event.message }, '*');
+        });
+      })();
+    </script>
+  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ESO Ventures — Board Dashboard Q1 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;family=Barlow:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
@@ -210,7 +495,7 @@ footer strong { color: #fff; }
 .fin-row .fv.green { color: var(--green); }
 </style>
 </head>
-<body>
+<body id="artifacts-component-root-html">
 
 <!-- ══ HEADER ══ -->
 <header class="hd">
@@ -220,9 +505,11 @@ footer strong { color: #fff; }
   <div class="hd-center">
     <div class="hd-title">ESO Performance Dashboard</div>
   </div>
-  <div class="hd-right">
-    <div>April 2026</div>
-    <div style="color:var(--gold); font-size:10px; margin-top:3px; font-weight:700;">⚑ MOCKUP — FOR REVIEW</div>
+  <div class="hd-right" style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+    <button onclick="downloadDashboard()" style="background: rgb(232, 184, 64); color: var(--navy); border: none; padding: 9px 18px; border-radius: 7px; font-family: Barlow, sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px; letter-spacing: 0.3px; transition: background 0.15s;" onmouseover="this.style.background='#E8B840'" onmouseout="this.style.background='#C8961F'">
+      ⬇ Download Dashboard
+    </button>
+    <div style="font-size:10px; color:rgba(255,255,255,0.4);">April 2026 &nbsp;·&nbsp; <span style="color:var(--gold); font-weight:700;">⚑ MOCKUP</span></div>
   </div>
 </header>
 
@@ -275,12 +562,12 @@ footer strong { color: #fff; }
   </div>
   <div class="row row-2l">
     <div class="card">
-      <div class="card-ttl">Revenue & Net Income — Annual Arc (2022–2025 + Q1 2026 YTD) <span class="ctag">Q1 '26 MOCK</span></div>
-      <div class="chart-wrap" style="height:270px"><canvas id="cRevenue"></canvas></div>
+      <div class="card-ttl">Revenue &amp; Net Income — Annual Arc (2022–2025 + Q1 2026 YTD) <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cRevenue" width="968" height="540" style="display: block; box-sizing: border-box; height: 270px; width: 484px;"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Net Margin % by Year</div>
-      <div class="chart-wrap" style="height:180px"><canvas id="cMargin"></canvas></div>
+      <div class="chart-wrap" style="height:180px"><canvas id="cMargin" width="615" height="360" style="display: block; box-sizing: border-box; height: 180px; width: 307px;"></canvas></div>
       <div style="margin-top:14px">
         <div class="fin-row"><span class="fl">2025 Net Income</span><span class="fv green">$642,759</span></div>
         <div class="fin-row"><span class="fl">2025 Net Margin</span><span class="fv green">22.0%</span></div>
@@ -301,7 +588,7 @@ footer strong { color: #fff; }
   <div class="row row-3">
     <div class="card">
       <div class="card-ttl">Revenue per FTE — Efficiency Trajectory</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cFTE"></canvas></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cFTE" width="600" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 300px;"></canvas></div>
       <div style="margin-top:12px">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green); font-weight:600">2025 Rev / FTE</span><span class="fv green">$150,000</span></div>
       </div>
@@ -310,16 +597,16 @@ footer strong { color: #fff; }
       <div class="mock-badge">⚑ MOCK</div>
       <div class="card-ttl">OKR Attainment — Full Year 2025 <span class="ctag">CONFIRM</span></div>
       <div class="okr-wrap">
-        <div class="chart-wrap" style="height:180px; width:180px"><canvas id="cOKR"></canvas></div>
+        <div class="chart-wrap" style="height:180px; width:180px"><canvas id="cOKR" width="360" height="360" style="display: block; box-sizing: border-box; height: 180px; width: 180px;"></canvas></div>
         <div class="okr-num">85%</div>
         <div class="okr-lbl">OKR Attainment Rate · Full Year 2025</div>
       </div>
-      <div class="okr-note">Team achieved 85 of 100 quarterly OKR objectives. Strongest performance in Q3 & Q4.</div>
+      <div class="okr-note">Team achieved 85 of 100 quarterly OKR objectives. Strongest performance in Q3 &amp; Q4.</div>
     </div>
     <div class="card mock">
       <div class="mock-badge">⚑ MOCK</div>
       <div class="card-ttl">Cost per Entrepreneur Served <span class="ctag">MOCK</span></div>
-      <div class="chart-wrap" style="height:200px"><canvas id="cCost"></canvas></div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cCost" width="600" height="400" style="display: block; box-sizing: border-box; height: 200px; width: 300px;"></canvas></div>
       <div style="margin-top:12px">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green); font-weight:600">↓ 75% reduction since 2022</span><span class="fv green">$8K → $2K</span></div>
       </div>
@@ -345,7 +632,7 @@ footer strong { color: #fff; }
       <div class="mock-badge">⚑ MOCK</div>
       <div class="card-ttl">2025 Revenue Composition — by Type <span class="ctag">MOCK</span></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:center; margin-top:6px">
-        <div class="chart-wrap" style="height:200px"><canvas id="cRevComp"></canvas></div>
+        <div class="chart-wrap" style="height:200px"><canvas id="cRevComp" width="600" height="400" style="display: block; box-sizing: border-box; height: 200px; width: 300px;"></canvas></div>
         <div class="rev-legend">
           <div class="rl-item">
             <div class="rl-dot" style="background:var(--navy)"></div>
@@ -392,16 +679,16 @@ footer strong { color: #fff; }
   </div>
   <div class="row row-3">
     <div class="card">
-      <div class="card-ttl">Capital Deployed — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cCapital"></canvas></div>
+      <div class="card-ttl">Capital Deployed — Annual &amp; Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cCapital" width="600" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 300px;"></canvas></div>
       <div class="stat-pair">
         <div class="stat-box"><div class="v">$8.19M</div><div class="l">Total through 2025</div></div>
         <div class="stat-box gold-box"><div class="v">$8.61M</div><div class="l">Est. through Q1 '26</div></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-ttl">Businesses Funded — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
-      <div class="chart-wrap" style="height:220px"><canvas id="cBizFunded"></canvas></div>
+      <div class="card-ttl">Businesses Funded — Annual &amp; Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cBizFunded" width="600" height="440" style="display: block; box-sizing: border-box; height: 220px; width: 300px;"></canvas></div>
       <div class="stat-pair">
         <div class="stat-box"><div class="v">191</div><div class="l">Funded through 2025</div></div>
         <div class="stat-box gold-box"><div class="v">205+</div><div class="l">Est. through Q1 '26</div></div>
@@ -440,15 +727,23 @@ footer strong { color: #fff; }
   <div class="row row-2eq">
     <div class="card mock">
       <div class="mock-badge">⚑ MOCK</div>
-      <div class="card-ttl">Systems & Technology Stack <span class="ctag">CONFIRM</span></div>
+      <div class="card-ttl">Systems &amp; Technology Stack <span class="ctag">CONFIRM</span></div>
       <div class="milestones">
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">Airtable CRM</div><div class="ms-date">Entrepreneur lifecycle management · Live Q2 2024</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">ESO HUB</div><div class="ms-date">Entrepreneur engagement hub · Live</div></div><span class="ms-tag live">Live</span></div>
-        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">AI Intake Personas</div><div class="ms-date">Armando & Maya · Live Q1 2025</div></div><span class="ms-tag live">Live</span></div>
-        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">LenderFit</div><div class="ms-date">Lending & capital deployment platform · Live</div></div><span class="ms-tag live">Live</span></div>
+        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">AI Intake Personas</div><div class="ms-date">Armando &amp; Maya · Live Q1 2025</div></div><span class="ms-tag live">Live</span></div>
+        <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">LenderFit</div><div class="ms-date">Lending &amp; capital deployment platform · Live</div></div><span class="ms-tag live">Live</span></div>
         <div class="ms"><div class="ms-icon live">✓</div><div class="ms-body"><div class="ms-name">Down Home</div><div class="ms-date">Community engagement platform · Live</div></div><span class="ms-tag live">Live</span></div>
+        <div class="ms" style="background:linear-gradient(135deg, #0D1B38 0%, #14274E 100%); border: 1px solid rgba(200,150,31,0.4);">
+          <div class="ms-icon live" style="background:rgba(200,150,31,0.2); color:#E8B840; font-size:16px;">✦</div>
+          <div class="ms-body">
+            <div class="ms-name" style="color:#FFFFFF; font-size:14px; font-weight:700;">Agentic AI — Armando</div>
+            <div class="ms-date" style="color:rgba(255,255,255,0.5);">AI-powered intake, qualification &amp; entrepreneur engagement · Live</div>
+          </div>
+          <span class="ms-tag live" style="background:rgba(200,150,31,0.25); color:#E8B840; border:1px solid rgba(200,150,31,0.4);">Live</span>
+        </div>
         <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Centralized Data Platform</div><div class="ms-date">Unified data infrastructure · ETA Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
-        <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Automated Reporting</div><div class="ms-date">Board & program reporting · WIP Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
+        <div class="ms"><div class="ms-icon prog">↻</div><div class="ms-body"><div class="ms-name">Automated Reporting</div><div class="ms-date">Board &amp; program reporting · WIP Q3 2026</div></div><span class="ms-tag prog">In Progress</span></div>
       </div>
     </div>
     <div class="card mock">
@@ -487,8 +782,8 @@ footer strong { color: #fff; }
       </tr>
     </thead>
     <tbody>
-      <tr><td>1</td><td>Q1 2026 Spotlight</td><td>Revenue YTD (Q1 2026)</td><td>$892,000</td><td>QuickBooks / Finance — Q1 P&L</td><td><span class="ph hi">HIGH</span></td></tr>
-      <tr><td>2</td><td>Q1 2026 Spotlight</td><td>Net Income YTD (Q1 2026)</td><td>$71,000</td><td>QuickBooks / Finance — Q1 P&L</td><td><span class="ph hi">HIGH</span></td></tr>
+      <tr><td>1</td><td>Q1 2026 Spotlight</td><td>Revenue YTD (Q1 2026)</td><td>$892,000</td><td>QuickBooks / Finance — Q1 P&amp;L</td><td><span class="ph hi">HIGH</span></td></tr>
+      <tr><td>2</td><td>Q1 2026 Spotlight</td><td>Net Income YTD (Q1 2026)</td><td>$71,000</td><td>QuickBooks / Finance — Q1 P&amp;L</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>3</td><td>Q1 2026 Spotlight</td><td>Entrepreneurs Served Q1 2026</td><td>42</td><td>Programs Team / Airtable CRM</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>4</td><td>Q1 2026 Spotlight</td><td>Capital Deployed YTD (Q1 2026)</td><td>$425,000</td><td>Lending / Fund Team</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>5</td><td>Q1 2026 Spotlight</td><td>Businesses Funded Q1 2026</td><td>14</td><td>Lending / Fund Team</td><td><span class="ph hi">HIGH</span></td></tr>
@@ -500,7 +795,7 @@ footer strong { color: #fff; }
       <tr><td>11</td><td>Operational Maturity</td><td>Cost per Entrepreneur — Q1 2026</td><td>$2,000</td><td>Finance — Q1 2026 program costs YTD</td><td><span class="ph md">MED</span></td></tr>
       <tr><td>12</td><td>Revenue Growth</td><td>2025 Earned Revenue (breakdown)</td><td>$2,100,000</td><td>Finance — revenue by type / funding source</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>13</td><td>Revenue Growth</td><td>2025 Contracted Revenue (not yet earned)</td><td>$580,000</td><td>Finance — contracted but not yet recognized</td><td><span class="ph hi">HIGH</span></td></tr>
-      <tr><td>14</td><td>Revenue Growth</td><td>Pipeline Value — 2025 & Q2 2026</td><td>$480K / $1.2M</td><td>Business Development / Ashley Moreland-Mizzi</td><td><span class="ph hi">HIGH</span></td></tr>
+      <tr><td>14</td><td>Revenue Growth</td><td>Pipeline Value — 2025 &amp; Q2 2026</td><td>$480K / $1.2M</td><td>Business Development / Ashley Moreland-Mizzi</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>15</td><td>Revenue Growth</td><td>New Contracts Signed Q1 2026</td><td>3</td><td>Business Development / Contracts log</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>16</td><td>Fund Performance</td><td>Loan Repayment Rate — 2022</td><td>78%</td><td>Lending Team — annual portfolio report (note: blank in spreadsheet for all actuals)</td><td><span class="ph hi">HIGH</span></td></tr>
       <tr><td>17</td><td>Fund Performance</td><td>Loan Repayment Rate — 2023</td><td>80%</td><td>Lending Team — annual portfolio report</td><td><span class="ph hi">HIGH</span></td></tr>
@@ -735,5 +1030,21 @@ new Chart(document.getElementById('cBizFunded'), {
   }
 });
 </script>
-</body>
-</html>
+
+<script>
+function downloadDashboard() {
+  const html = document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ESO_Performance_Dashboard_Q1_2026.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+
+
+</body></html>
