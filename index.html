@@ -1262,7 +1262,7 @@ function num(v) {
   return isNaN(n) ? null : n;
 }
 
-function fmt(val) {
+function fmtVal(val) {
   const n = num(val);
   if (n === null) return null;
   if (n >= 1000000) return '$' + (n/1000000).toFixed(2).replace(/\.00$/,'') + 'M';
@@ -1305,9 +1305,9 @@ function applyValues(v) {
   }
 
   // ── Spotlight KPIs ──
-  setKPI('Revenue Confirmed',   fmt(v.revenue_confirmed) || v.revenue_confirmed);
+  setKPI('Revenue Confirmed',   fmtVal(v.revenue_confirmed) || v.revenue_confirmed);
   setKPI('Net Income',          v.net_income_ytd !== undefined ? ('$' + (num(v.net_income_ytd)||0).toLocaleString()) : null);
-  setKPI('Capital Deployed',    fmt(v.capital_deployed));
+  setKPI('Capital Deployed',    fmtVal(v.capital_deployed));
   if (v.entrepreneurs_served) {
     setKPI('Entrepreneurs', v.entrepreneurs_served);
   }
@@ -1367,7 +1367,7 @@ function applyValues(v) {
     document.querySelectorAll('div').forEach(el => {
       if (el.childElementCount === 0 && (el.textContent.includes('3,166') || el.textContent.includes('3.166'))) {
         if (el.style.fontSize && parseInt(el.style.fontSize) >= 30) {
-          el.textContent = fmt(v.total_revenue_goal);
+          el.textContent = fmtVal(v.total_revenue_goal);
         }
       }
     });
@@ -1375,21 +1375,21 @@ function applyValues(v) {
   if (v.pipeline_value) {
     document.querySelectorAll('div').forEach(el => {
       if (el.childElementCount === 0 && el.textContent.includes('1,861')) {
-        el.textContent = fmt(v.pipeline_value);
+        el.textContent = fmtVal(v.pipeline_value);
       }
     });
   }
   if (v.product_sales) {
     document.querySelectorAll('div').forEach(el => {
       if (el.childElementCount === 0 && el.textContent.includes('54,000')) {
-        el.textContent = fmt(v.product_sales);
+        el.textContent = fmtVal(v.product_sales);
       }
     });
   }
   if (v.grant_income) {
     document.querySelectorAll('div').forEach(el => {
       if (el.childElementCount === 0 && el.textContent.includes('300,000')) {
-        el.textContent = fmt(v.grant_income);
+        el.textContent = fmtVal(v.grant_income);
       }
     });
   }
