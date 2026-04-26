@@ -1009,9 +1009,9 @@ new Chart(document.getElementById('cRevenue'), {
 new Chart(document.getElementById('cMargin'), {
   type: 'line',
   data: {
-    labels: ['2022','2023','2024','2025'],
+    labels: ['2022','2023','2024','2025','Q1 2026'],
     datasets: [{
-      label: 'Net Margin %', data: [0.8,12.2,1.6,22.0],
+      label: 'Net Margin %', data: [0.8,12.2,1.6,22.0,0],
       borderColor: C.gold, backgroundColor: C.gold+'22',
       borderWidth: 3, pointBackgroundColor: C.gold, pointRadius: 6,
       fill: true, tension: 0.35
@@ -1320,7 +1320,17 @@ function applyValues(v) {
   updateChart('cRevenue', 1, 4, num(v.net_income_ytd));
 
   // ── NET MARGIN ──
-  sf('net_margin', v.net_margin, null);
+  sf('net_margin', v.net_margin, v => { const n = parseFloat(String(v).replace('%','')); return isNaN(n) ? v : n.toFixed(1)+'%'; });
+  // Update margin chart last point (Q1 2026)
+  if (v.net_margin) {
+    const marginVal = parseFloat(String(v.net_margin).replace('%',''));
+    if (!isNaN(marginVal)) updateChart('cMargin', 0, 4, marginVal);
+  }
+  // Also update historical margin if available
+  updateChart('cMargin', 0, 0, num(v.net_margin_2022));
+  updateChart('cMargin', 0, 1, num(v.net_margin_2023));
+  updateChart('cMargin', 0, 2, num(v.net_margin_2024));
+  updateChart('cMargin', 0, 3, num(v.net_margin_2025));
 
   // ── OKR GAUGE ──
   const okrQ1 = num(v.okr_q1), okrTgt = num(v.okr_target)||80;
