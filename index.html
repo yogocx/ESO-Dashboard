@@ -952,7 +952,7 @@ function checkPassword() {
 
 <footer>
   <div><strong>ESO Executive Performance Overview</strong> · Q1 2026</div>
-  <div>April 2026 &nbsp;·&nbsp; ⚑ MOCKUP — Not for distribution</div>
+  <div>April 2026 &nbsp;·&nbsp; 🔒 CONFIDENTIAL</div>
 </footer>
 
 <script>
@@ -1353,9 +1353,14 @@ function showStatus(ok, msg) {
   const footer = document.querySelector('footer');
   if (!footer) return;
   let el = document.getElementById('gs-status');
-  if (!el) { el = document.createElement('div'); el.id = 'gs-status'; footer.appendChild(el); }
-  el.style.cssText = 'font-size:10px; margin-top:4px;';
-  el.style.color = ok ? 'rgba(82,184,86,0.7)' : 'rgba(255,180,60,0.6)';
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'gs-status';
+    el.style.cssText = 'width:100%; text-align:center; font-size:10px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.08); margin-top:8px;';
+    footer.style.flexWrap = 'wrap';
+    footer.appendChild(el);
+  }
+  el.style.color = ok ? 'rgba(82,184,86,0.8)' : 'rgba(255,180,60,0.7)';
   el.textContent = ok
     ? '✓ YOGO CX CDP · Live · ' + new Date().toLocaleTimeString()
     : '⚠ YOGO CX CDP · Cached' + (msg ? ' — ' + msg : '');
