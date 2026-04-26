@@ -728,12 +728,12 @@ function checkPassword() {
     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
       <div>
         <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:6px;">2026 Total Revenue Goal</div>
-        <div style="font-size:38px;font-weight:700;color:#fff;line-height:1;">$3,166,000</div>
+        <div data-field="total_revenue_goal" style="font-size:38px;font-weight:700;color:#fff;line-height:1;">$3,166,000</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:5px;">Full Year Target</div>
       </div>
       <div style="text-align:right;">
         <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:6px;">Total Confirmed to Date</div>
-        <div style="font-size:38px;font-weight:700;color:#72D476;line-height:1;">$1,595,000</div>
+        <div data-field="revenue_confirmed" style="font-size:38px;font-weight:700;color:#72D476;line-height:1;">$1,595,000</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:5px;">50.4% of total goal — before pipeline closes</div>
       </div>
     </div>
@@ -801,10 +801,10 @@ function checkPassword() {
             <span style="font-size:14px;font-weight:700;color:#72D476;">17.7%</span>
           </div>
           <div style="height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
-            <div style="height:100%;width:17.7%;background:#52B856;border-radius:4px;"></div>
+            <div data-field="pipeline_bar" style="height:100%;width:17.7%;background:#52B856;border-radius:4px;"></div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;">
-            <span>$354,000 active pipeline</span><span>$2,000,000 target</span>
+            <span data-field="pipeline_label">$354,000 active pipeline</span><span>$2,000,000 target</span>
           </div>
         </div>
 
@@ -814,16 +814,16 @@ function checkPassword() {
               <div style="font-size:12px;font-weight:600;color:#72D476;">Q1 Confirmed Revenue</div>
               <div style="font-size:10px;color:rgba(255,255,255,0.35);">Counting toward $2M new goal</div>
             </div>
-            <div style="font-size:16px;font-weight:700;color:#72D476;">$354,000</div>
+            <div data-field="q1_confirmed_total" style="font-size:16px;font-weight:700;color:#72D476;">$354,000</div>
           </div>
           <div style="padding:0 12px 10px;display:flex;gap:8px;">
             <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.35);">Product Sales</div>
-              <div style="font-size:13px;font-weight:700;color:#72D476;">$54,000</div>
+              <div data-field="product_sales" style="font-size:13px;font-weight:700;color:#72D476;">$54,000</div>
             </div>
             <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.35);">Grant Income</div>
-              <div style="font-size:13px;font-weight:700;color:#72D476;">$300,000</div>
+              <div data-field="grant_income" style="font-size:13px;font-weight:700;color:#72D476;">$300,000</div>
             </div>
           </div>
         </div>
@@ -833,14 +833,14 @@ function checkPassword() {
             <div style="font-size:12px;font-weight:600;color:#72D476;">Total Pipeline (Q2 2026)</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">In negotiation · Business Development</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:#72D476;">$1,861,372</div>
+          <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$1,861,372</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
           <div>
             <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">Still Needed</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Gap to close ($2M goal − $354K confirmed)</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.6);">$1,646,000</div>
+          <div data-field="still_needed" style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.6);">$1,646,000</div>
         </div>
       </div>
 
@@ -1341,18 +1341,51 @@ function applyValues(v) {
       bn.textContent = parseInt(v.total_entrepreneurs).toLocaleString();
   });
 
-  // Revenue goal panel large numbers
-  document.querySelectorAll('div').forEach(el => {
-    if (el.children.length || !el.style || !el.style.fontSize) return;
-    const fs = parseInt(el.style.fontSize), t = el.textContent.trim();
-    if (fs >= 30 && v.total_revenue_goal && (t.includes('3,166')||t.includes('3.166')))
-      el.textContent = fmtVal(v.total_revenue_goal);
-    if (fs >= 14) {
-      if (v.pipeline_value && t.includes('1,861')) el.textContent = fmtVal(v.pipeline_value);
-      if (v.product_sales && t.includes('54,000')) el.textContent = fmtVal(v.product_sales);
-      if (v.grant_income && t.includes('300,000')) el.textContent = fmtVal(v.grant_income);
-    }
-  });
+  // Revenue goal panel — use data-field attributes for reliable targeting
+  const setField = (field, value, formatter) => {
+    if (!value) return;
+    const els = document.querySelectorAll(`[data-field="${field}"]`);
+    els.forEach(el => {
+      el.textContent = formatter ? formatter(value) : value;
+      console.log('ESO: Set field', field, '=', el.textContent);
+    });
+  };
+
+  setField('total_revenue_goal',  v.total_revenue_goal,  fmtVal);
+  setField('pipeline_value',      v.pipeline_value,      fmtVal);
+  setField('product_sales',       v.product_sales,       fmtVal);
+  setField('grant_income',        v.grant_income,        fmtVal);
+
+  // Q1 confirmed total = product_sales + grant_income
+  const ps = parseFloat(v.product_sales) || 0;
+  const gi = parseFloat(v.grant_income)  || 0;
+  const q1total = ps + gi;
+  if (q1total > 0) setField('q1_confirmed_total', q1total, fmtVal);
+
+  // Pipeline % toward $2M new goal
+  const newGoal = parseFloat(v.new_revenue_goal) || 2000000;
+  const pipelineV = parseFloat(v.pipeline_value) || 0;
+  if (pipelineV > 0) {
+    const pct = ((q1total / newGoal) * 100).toFixed(1) + '%';
+    setField('pipeline_pct', pct, null);
+    setField('pipeline_label', fmtVal(q1total) + ' active pipeline', null);
+    const barPct = ((q1total / newGoal) * 100).toFixed(1) + '%';
+    document.querySelectorAll('[data-field="pipeline_bar"]').forEach(el => {
+      el.style.width = barPct;
+    });
+  }
+
+  // Still needed = new_revenue_goal - q1total
+  if (newGoal && q1total >= 0) {
+    const stillNeeded = newGoal - q1total;
+    setField('still_needed', stillNeeded, fmtVal);
+  }
+
+  // Revenue confirmed spotlight
+  const confirmed = parseFloat(v.revenue_confirmed) || 0;
+  if (confirmed > 0) {
+    setField('revenue_confirmed', confirmed, fmtVal);
+  }
 }
 
 function showStatus(ok, msg) {
