@@ -1237,9 +1237,13 @@ function num(v) {
   return isNaN(n) ? null : n;
 }
 
-function fmtVal(val) {
+function fmtVal(val, exact) {
   const n = num(val);
   if (n === null) return null;
+  // exact=true always shows full dollar amount with commas
+  if (exact || (n < 1000000 && n % 1000 !== 0)) {
+    return '$' + Math.round(n).toLocaleString();
+  }
   if (n >= 1000000) return '$' + (n/1000000).toFixed(2).replace(/\.00$/,'') + 'M';
   if (n >= 1000)    return '$' + Math.round(n/1000) + 'K';
   return '$' + n.toLocaleString();
@@ -1351,16 +1355,16 @@ function applyValues(v) {
     });
   };
 
-  setField('total_revenue_goal',  v.total_revenue_goal,  fmtVal);
-  setField('pipeline_value',      v.pipeline_value,      fmtVal);
-  setField('product_sales',       v.product_sales,       fmtVal);
-  setField('grant_income',        v.grant_income,        fmtVal);
+  setField('total_revenue_goal',  v.total_revenue_goal,  v => fmtVal(v, true));
+  setField('pipeline_value',      v.pipeline_value,      v => fmtVal(v, true));
+  setField('product_sales',       v.product_sales,       v => fmtVal(v, true));
+  setField('grant_income',        v.grant_income,        v => fmtVal(v, true));
 
   // Q1 confirmed total = product_sales + grant_income
   const ps = parseFloat(v.product_sales) || 0;
   const gi = parseFloat(v.grant_income)  || 0;
   const q1total = ps + gi;
-  if (q1total > 0) setField('q1_confirmed_total', q1total, fmtVal);
+  if (q1total > 0) setField('q1_confirmed_total', q1total, v => fmtVal(v, true));
 
   // Pipeline % toward $2M new goal
   const newGoal = parseFloat(v.new_revenue_goal) || 2000000;
@@ -1378,13 +1382,13 @@ function applyValues(v) {
   // Still needed = new_revenue_goal - q1total
   if (newGoal && q1total >= 0) {
     const stillNeeded = newGoal - q1total;
-    setField('still_needed', stillNeeded, fmtVal);
+    setField('still_needed', stillNeeded, v => fmtVal(v, true));
   }
 
   // Revenue confirmed spotlight
   const confirmed = parseFloat(v.revenue_confirmed) || 0;
   if (confirmed > 0) {
-    setField('revenue_confirmed', confirmed, fmtVal);
+    setField('revenue_confirmed', confirmed, v => fmtVal(v, true));
   }
 }
 
