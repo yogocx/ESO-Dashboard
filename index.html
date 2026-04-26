@@ -202,6 +202,45 @@ table.log { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 footer { background: var(--navy); color: rgba(255,255,255,0.5); padding: 18px 48px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 44px; }
 footer strong { color: #fff; }
 
+/* ── TARGET INDICATORS ── */
+.target-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
+  background: var(--bg);
+}
+.target-row .t-label { font-size: 11px; color: var(--text2); font-weight: 500; }
+.target-row .t-vals  { display: flex; align-items: center; gap: 10px; }
+.target-row .t-actual { font-size: 14px; font-weight: 700; color: var(--navy); }
+.target-row .t-target { font-size: 10px; color: var(--text3); }
+.target-row .t-badge  {
+  font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.t-badge.above { background: var(--green-lt); color: var(--green); }
+.t-badge.below { background: #FEE2E2; color: #B91C1C; }
+.t-badge.at    { background: var(--teal-lt); color: var(--teal); }
+.t-progress-wrap {
+  height: 5px; background: var(--border); border-radius: 3px;
+  overflow: hidden; margin-top: 4px;
+}
+.t-progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: width 0.6s ease;
+}
+.t-progress-fill.over  { background: var(--green); }
+.t-progress-fill.under { background: var(--gold); }
+
+/* ── SPOTLIGHT TARGET DELTA ── */
+.kpi-target {
+  font-size: 10px; color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+}
+.kpi-vs { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-top: 6px; display: inline-block; }
+.kpi-vs.green { background: rgba(46,125,82,0.3); color: #88DBA8; }
+.kpi-vs.red   { background: rgba(184,66,66,0.25); color: #FFAAAA; }
+
+/* ── INLINE HINT ROWS FOR FINANCIAL SUMMARY */
 /* Inline highlight rows for financial summary */
 .fin-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; }
 .fin-row:last-child { margin-bottom: 0; }
@@ -695,6 +734,16 @@ function checkPassword() {
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;">Q1 2026 Actual</span><span class="fv green" data-field="okr_q1_display">81%</span></div>
         <div class="fin-row" style="background:var(--bg)"><span class="fl" style="color:var(--text3);">Annual Target</span><span class="fv" style="color:var(--text3);" data-field="okr_target_display">80%</span></div>
         <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv" data-field="okr_fy2025_display">85%</span></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="t-progress-wrap">
+          <div class="t-progress-fill over" data-field="okr_progress_bar" style="width:81%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;">
+          <span style="color:var(--text3)">0%</span>
+          <span data-field="okr_target_line" style="color:var(--gold);font-weight:700;">▲ Target: 80%</span>
+          <span style="color:var(--text3)">100%</span>
+        </div>
       </div>
     </div>
     <div class="card">
@@ -1379,6 +1428,28 @@ function applyValues(v) {
   sf('cost_per_entrepreneur_display', v.cost_per_entrepreneur,
      v => '$' + parseInt(v).toLocaleString() + ' · Proj. $4,273 by 2027');
 
+  // ── TARGET PROGRESS BARS ──
+  setTargetProgress('fte_progress',    'fte_target_label',    v.fte_count,          v.target_fte,          false);
+  setTargetProgress('nps_progress',    'nps_target_label',    v.nps_current,        v.target_nps,          true);
+  setTargetProgress('okr_progress_bar','okr_target_line',     pctNum(v.okr_q1),     pctNum(v.target_okr),  true);
+
+  // OKR progress bar width
+  if (v.okr_q1 && v.target_okr) {
+    const okrA = pctNum(v.okr_q1), okrT = pctNum(v.target_okr);
+    if (okrA && okrT) {
+      const pct = Math.min((okrA/okrT)*100, 100).toFixed(0);
+      document.querySelectorAll('[data-field="okr_progress_bar"]').forEach(el => {
+        el.style.width = pct + '%';
+        el.className = 't-progress-fill ' + (okrA >= okrT ? 'over' : 'under');
+      });
+      document.querySelectorAll('[data-field="okr_target_line"]').forEach(el => {
+        const diff = okrA - okrT;
+        el.textContent = '▲ Target: ' + okrT + '% · ' + (diff >= 0 ? '+' : '') + diff.toFixed(0) + '% ' + (diff >= 0 ? '✓' : '⚠');
+        el.style.color = diff >= 0 ? 'var(--green)' : 'var(--gold)';
+      });
+    }
+  }
+
   // ── FUND PERFORMANCE ──
   sf('capital_cumulative',       v.capital_cumulative,  abbrev);
   sf('biz_funded_cumulative',    v.biz_funded_cumulative, null);
@@ -1445,6 +1516,33 @@ function applyValues(v) {
   const stillNeeded = newGoal - q1total;
   if (stillNeeded >= 0) sf('still_needed', stillNeeded, exact);
 
+}
+
+
+// ── TARGET VISUALIZATION HELPERS ──
+function pctNum(v) {
+  if (!v) return null;
+  const n = parseFloat(String(v).replace('%',''));
+  return isNaN(n) ? null : n;
+}
+
+function setTargetProgress(barField, labelField, actual, target, higherIsBetter) {
+  if (!actual || !target) return;
+  const a = parseFloat(String(actual).replace(/[$,%]/g,''));
+  const t = parseFloat(String(target).replace(/[$,%]/g,''));
+  if (isNaN(a) || isNaN(t) || t === 0) return;
+  const pct = Math.min((a/t)*100, 100).toFixed(0);
+  const isGood = higherIsBetter ? a >= t : a <= t;
+  document.querySelectorAll(`[data-field="${barField}"]`).forEach(el => {
+    el.style.width = pct + '%';
+    el.className = 't-progress-fill ' + (isGood ? 'over' : 'under');
+  });
+  document.querySelectorAll(`[data-field="${labelField}"]`).forEach(el => {
+    const diff = a - t;
+    const sign = diff >= 0 ? '+' : '';
+    el.textContent = `Target: ${target} (${sign}${diff.toFixed(0)} ${isGood ? '✓' : '⚠'})`;
+    el.style.color = isGood ? 'var(--green)' : 'var(--gold)';
+  });
 }
 
 function showStatus(ok, msg) {
