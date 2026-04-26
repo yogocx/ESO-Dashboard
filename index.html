@@ -602,13 +602,13 @@ function checkPassword() {
     </div>
   </div>
   <div class="kpi-grid">
-    <div class="kpi">
+    <div class="kpi" data-kpi="revenue_confirmed">
       <div class="kpi-lbl">Revenue Confirmed 2026</div>
       <div class="kpi-val">$1.595M</div>
       <div class="kpi-note">$1.241M floor + $354K active pipeline · Goal: $3.166M</div>
       <div class="kpi-delta">50.4% of Annual Goal</div>
     </div>
-    <div class="kpi">
+    <div class="kpi" data-kpi="net_income_ytd">
       <div class="kpi-lbl">Net Income YTD</div>
       <div class="kpi-val">$0</div>
       <div class="kpi-note">Net margin 0% Q1 · Target: 7.91% full year</div>
@@ -647,8 +647,8 @@ function checkPassword() {
       <div class="chart-wrap" style="height:180px; overflow:hidden; max-width:100%;"><canvas id="cMargin"></canvas></div>
       <div style="margin-top:14px">
         <div class="fin-row"><span class="fl">2025 Net Income</span><span class="fv green">$642,759</span></div>
-        <div class="fin-row"><span class="fl">2025 Net Margin</span><span class="fv green">22.0%</span></div>
-        <div class="fin-row"><span class="fl">Peak Revenue Year</span><span class="fv">2023 — $3.86M</span></div>
+        <div class="fin-row"><span class="fl">2025 Net Margin</span><span class="fv green" data-field="net_margin">22.0%</span></div>
+        <div class="fin-row"><span class="fl">Peak Revenue Year</span><span class="fv" data-field="peak_revenue_label">2023 — $3.86M</span></div>
         <div class="fin-row"><span class="fl">Revenue Trajectory</span><span class="fv">Recovery ↑ 2026</span></div>
       </div>
     </div>
@@ -667,8 +667,8 @@ function checkPassword() {
       <div class="card-ttl">Revenue per FTE — Efficiency Trajectory</div>
       <div class="chart-wrap" style="height:220px; overflow:hidden; max-width:100%;"><canvas id="cFTE"></canvas></div>
       <div style="margin-top:12px">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">2025 Rev / FTE</span><span class="fv green">$149,976</span></div>
-        <div class="fin-row"><span class="fl" style="color:var(--text3)">2026 Projected</span><span class="fv" style="color:var(--gold)">$287,818</span></div>
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">2025 Rev / FTE</span><span class="fv green" data-field="rev_per_fte">$149,976</span></div>
+        <div class="fin-row"><span class="fl" style="color:var(--text3)">2026 Projected</span><span class="fv" style="color:var(--gold)" data-field="rev_per_fte_proj">$287,818</span></div>
       </div>
     </div>
     <div class="card">
@@ -692,16 +692,16 @@ function checkPassword() {
         </div>
       </div>
       <div style="margin-top:4px;">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;">Q1 2026 Actual</span><span class="fv green">81%</span></div>
-        <div class="fin-row" style="background:var(--bg)"><span class="fl" style="color:var(--text3);">Annual Target</span><span class="fv" style="color:var(--text3);">80%</span></div>
-        <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv">85%</span></div>
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;">Q1 2026 Actual</span><span class="fv green" data-field="okr_q1_display">81%</span></div>
+        <div class="fin-row" style="background:var(--bg)"><span class="fl" style="color:var(--text3);">Annual Target</span><span class="fv" style="color:var(--text3);" data-field="okr_target_display">80%</span></div>
+        <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv" data-field="okr_fy2025_display">85%</span></div>
       </div>
     </div>
     <div class="card">
       <div class="card-ttl">Cost per Entrepreneur Served</div>
       <div class="chart-wrap" style="height:200px; overflow:hidden; max-width:100%;"><canvas id="cCost"></canvas></div>
       <div style="margin-top:12px">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--text2); font-weight:600">2025 Actual</span><span class="fv" style="color:var(--navy)">$7,320 · Proj. $4,273 by 2027</span></div>
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--text2); font-weight:600">2025 Actual</span><span class="fv" style="color:var(--navy)" data-field="cost_per_entrepreneur_display">$7,320 · Proj. $4,273 by 2027</span></div>
       </div>
     </div>
   </div>
@@ -777,21 +777,21 @@ function checkPassword() {
             <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">Active Contracts</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Carried from 2025</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">$346,000</div>
+          <div data-field="floor_contracts" style="font-size:16px;font-weight:700;color:#fff;">$346,000</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
           <div>
             <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">ESO Capital Fund</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Secured fund revenue</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:#fff;">$895,000</div>
+          <div data-field="floor_fund" style="font-size:16px;font-weight:700;color:#fff;">$895,000</div>
         </div>
       </div>
 
       <!-- RIGHT: New Revenue Goal -->
       <div style="background:rgba(82,184,86,0.10);border:1px solid rgba(82,184,86,0.35);border-radius:10px;padding:18px;">
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(114,212,118,0.8);font-weight:700;margin-bottom:4px;">Net New Revenue Goal</div>
-        <div style="font-size:24px;font-weight:700;color:#72D476;margin-bottom:2px;">$2,000,000</div>
+        <div data-field="new_revenue_goal" style="font-size:24px;font-weight:700;color:#72D476;margin-bottom:2px;">$2,000,000</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:14px;">Must be sourced from new commitments &amp; pipeline</div>
 
         <!-- Progress toward $2M -->
@@ -860,15 +860,15 @@ function checkPassword() {
       <div class="card-ttl">Capital Deployed — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
       <div class="chart-wrap" style="height:220px; overflow:hidden; max-width:100%;"><canvas id="cCapital"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v">$8.19M</div><div class="l">Total through 2025</div></div>
-        <div class="stat-box gold-box"><div class="v">$8.39M</div><div class="l">Est. through Q1 '26</div></div>
+        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.19M</div><div class="l">Total through 2025</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed_cumulative_q1">$8.39M</div><div class="l">Est. through Q1 '26</div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-ttl">Businesses Funded — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
       <div class="chart-wrap" style="height:220px; overflow:hidden; max-width:100%;"><canvas id="cBizFunded"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v">191</div><div class="l">Funded through 2025</div></div>
+        <div class="stat-box"><div class="v" data-field="biz_funded_cumulative">191</div><div class="l">Funded through 2025</div></div>
         <div class="stat-box gold-box"><div class="v">⚑ TBD</div><div class="l">Q1 '26 · Need from Lending</div></div>
       </div>
     </div>
@@ -891,7 +891,7 @@ function checkPassword() {
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);">Delinquency &gt;30 Days</div>
           <div style="font-size:10px;color:var(--text3);margin-top:2px;">Q1 2026 · Lending Portfolio</div>
         </div>
-        <div style="font-size:24px;font-weight:700;color:var(--green);">&lt;5%</div>
+        <div data-field="delinquency" style="font-size:24px;font-weight:700;color:var(--green);">&lt;5%</div>
       </div>
     </div>
   </div>
@@ -1278,19 +1278,36 @@ function updateChart(id, dataset, index, value) {
 function applyValues(v) {
   console.log('ESO: Applying', Object.keys(v).length, 'values to dashboard');
 
-  // Period label
+  // ── Utility: set any data-field element ──
+  const sf = (field, value, formatter) => {
+    if (value === null || value === undefined || value === '') return;
+    const val = formatter ? formatter(value) : value;
+    document.querySelectorAll(`[data-field="${field}"]`).forEach(el => {
+      el.textContent = val;
+    });
+    // Also handle kpi cards
+    document.querySelectorAll(`[data-kpi="${field}"] .kpi-val`).forEach(el => {
+      el.textContent = val;
+    });
+    console.log('ESO: →', field, '=', val);
+  };
+
+  const exact = v => fmtVal(v, true);
+  const abbrev = v => fmtVal(v, false);
+
+  // ── PERIOD LABEL ──
   if (v.period) {
     document.querySelectorAll('.sp-eyebrow').forEach(el => {
       el.innerHTML = '<div class="sp-dot"></div> Current Moment — ' + v.period + ' Year-to-Date';
     });
   }
 
-  // Spotlight KPIs
-  if (v.revenue_confirmed) setKPI('Revenue Confirmed', fmtVal(v.revenue_confirmed));
-  if (v.net_income_ytd !== undefined) setKPI('Net Income', '$' + (num(v.net_income_ytd)||0).toLocaleString());
-  if (v.capital_deployed) setKPI('Capital Deployed', fmtVal(v.capital_deployed));
+  // ── SPOTLIGHT KPIs ──
+  sf('revenue_confirmed',  v.revenue_confirmed,  abbrev);
+  sf('net_income_ytd',     v.net_income_ytd,     v => '$' + (parseFloat(v)||0).toLocaleString());
+  sf('capital_deployed',   v.capital_deployed,   abbrev);
 
-  // Revenue chart (cRevenue)
+  // ── REVENUE CHART ──
   updateChart('cRevenue', 0, 0, num(v.rev_2022));
   updateChart('cRevenue', 0, 1, num(v.rev_2023));
   updateChart('cRevenue', 0, 2, num(v.rev_2024));
@@ -1302,9 +1319,13 @@ function applyValues(v) {
   updateChart('cRevenue', 1, 3, num(v.ni_2025));
   updateChart('cRevenue', 1, 4, num(v.net_income_ytd));
 
-  // OKR gauge
+  // ── NET MARGIN ──
+  sf('net_margin', v.net_margin, null);
+
+  // ── OKR GAUGE ──
   const okrQ1 = num(v.okr_q1), okrTgt = num(v.okr_target)||80;
   if (okrQ1 !== null) {
+    // Center number
     document.querySelectorAll('div').forEach(el => {
       if (!el.children.length && /^\d{1,3}%$/.test(el.textContent.trim()) &&
           parseInt(el.textContent)>=50 && el.style && el.style.fontSize &&
@@ -1317,17 +1338,14 @@ function applyValues(v) {
     updateChart('cOKR', 0, 1, mw);
     updateChart('cOKR', 0, 2, Math.max(0, okrQ1 - okrTgt - mw/2));
     updateChart('cOKR', 0, 3, 100 - okrQ1);
-    document.querySelectorAll('.fin-row').forEach(row => {
-      const lbl = row.querySelector('.fl'), val = row.querySelector('.fv');
-      if (!lbl||!val) return;
-      if (lbl.textContent.includes('Q1') && lbl.textContent.includes('Actual')) val.textContent = Math.round(okrQ1)+'%';
-      if (lbl.textContent.includes('Annual Target')) val.textContent = Math.round(okrTgt)+'%';
-      if (lbl.textContent.includes('Full Year 2025') && v.okr_fy2025) val.textContent = Math.round(num(v.okr_fy2025))+'%';
-    });
+    sf('okr_q1_display',    okrQ1,        v => Math.round(v)+'%');
+    sf('okr_target_display',okrTgt,       v => Math.round(v)+'%');
+    sf('okr_fy2025_display',v.okr_fy2025, v => Math.round(parseFloat(v))+'%');
+    // Above/below label
+    const d = okrQ1 - okrTgt;
     document.querySelectorAll('div').forEach(el => {
       if (!el.children.length && el.textContent &&
           (el.textContent.includes('above target')||el.textContent.includes('below target'))) {
-        const d = okrQ1 - okrTgt;
         el.textContent = d>=0
           ? '▲ '+Math.abs(d).toFixed(0)+'% above target'
           : '▼ '+Math.abs(d).toFixed(0)+'% below target';
@@ -1335,61 +1353,82 @@ function applyValues(v) {
     });
   }
 
-  // Big stat cards
-  document.querySelectorAll('.big-card').forEach(card => {
-    const bn = card.querySelector('.big-n'), bl = card.querySelector('.big-l');
-    if (!bn||!bl) return;
-    if (bl.textContent.includes('FTEs Today') && v.fte_count) bn.textContent = v.fte_count;
-    if (bl.textContent.includes('NPS Score') && v.nps_2025) bn.textContent = v.nps_2025;
-    if (bl.textContent.includes('Entrepreneurs Served') && v.total_entrepreneurs)
-      bn.textContent = parseInt(v.total_entrepreneurs).toLocaleString();
-  });
+  // ── OPERATIONAL ──
+  sf('fte_count',       v.fte_count,       null);
+  sf('fte_peak',        v.fte_peak,        null);
+  sf('nps_current',     v.nps_current,     null);
+  sf('total_entrepreneurs', v.total_entrepreneurs, v => parseInt(v).toLocaleString());
+  sf('rev_per_fte',     v.rev_per_fte,     exact);
+  sf('rev_per_fte_proj',v.rev_per_fte_proj || v.rev_per_fte, abbrev);
+  sf('cost_per_entrepreneur_display', v.cost_per_entrepreneur,
+     v => '$' + parseInt(v).toLocaleString() + ' · Proj. $4,273 by 2027');
 
-  // Revenue goal panel — use data-field attributes for reliable targeting
-  const setField = (field, value, formatter) => {
-    if (!value) return;
-    const els = document.querySelectorAll(`[data-field="${field}"]`);
-    els.forEach(el => {
-      el.textContent = formatter ? formatter(value) : value;
-      console.log('ESO: Set field', field, '=', el.textContent);
+  // ── FUND PERFORMANCE ──
+  sf('capital_cumulative',       v.capital_cumulative,  abbrev);
+  sf('biz_funded_cumulative',    v.biz_funded_cumulative, null);
+  sf('delinquency',              v.delinquency,         null);
+  // Q1 cumulative = historical cumulative + Q1 deployed
+  const cumHist = parseFloat(v.capital_cumulative) || 0;
+  const capQ1   = parseFloat(v.capital_deployed)   || 0;
+  if (cumHist && capQ1) sf('capital_deployed_cumulative_q1', cumHist + capQ1, abbrev);
+
+  // Repayment bars — update if data available
+  if (v.repayment_rate) {
+    const pct = parseFloat(v.repayment_rate);
+    document.querySelectorAll('.rep-row').forEach((row, i) => {
+      const yr = row.querySelector('.rep-yr');
+      if (yr && yr.textContent.includes('Q1')) {
+        const bar = row.querySelector('.rep-bar');
+        const label = row.querySelector('.rep-pct');
+        if (bar) bar.style.width = pct + '%';
+        if (label) label.textContent = pct + '%';
+      }
     });
-  };
+  }
 
-  setField('total_revenue_goal',  v.total_revenue_goal,  v => fmtVal(v, true));
-  setField('pipeline_value',      v.pipeline_value,      v => fmtVal(v, true));
-  setField('product_sales',       v.product_sales,       v => fmtVal(v, true));
-  setField('grant_income',        v.grant_income,        v => fmtVal(v, true));
+  // ── REVENUE GOAL PANEL ──
+  sf('total_revenue_goal', v.total_revenue_goal, exact);
+  sf('new_revenue_goal',   v.new_revenue_goal,   exact);
+  sf('floor_contracts',    v.floor_contracts,    exact);
+  sf('floor_fund',         v.floor_fund,         exact);
+  sf('product_sales',      v.product_sales,      exact);
+  sf('grant_income',       v.grant_income,       exact);
+  sf('pipeline_value',     v.pipeline_value,     exact);
+
+  // Floor total
+  const fc = parseFloat(v.floor_contracts)||0;
+  const ff = parseFloat(v.floor_fund)||0;
+  const floorTotal = fc + ff;
+  if (floorTotal > 0) sf('floor_total', floorTotal, exact);
 
   // Q1 confirmed total = product_sales + grant_income
-  const ps = parseFloat(v.product_sales) || 0;
-  const gi = parseFloat(v.grant_income)  || 0;
+  const ps = parseFloat(v.product_sales)||0;
+  const gi = parseFloat(v.grant_income)||0;
   const q1total = ps + gi;
-  if (q1total > 0) setField('q1_confirmed_total', q1total, v => fmtVal(v, true));
+  if (q1total > 0) sf('q1_confirmed_total', q1total, exact);
 
-  // Pipeline % toward $2M new goal
-  const newGoal = parseFloat(v.new_revenue_goal) || 2000000;
-  const pipelineV = parseFloat(v.pipeline_value) || 0;
-  if (pipelineV > 0) {
-    const pct = ((q1total / newGoal) * 100).toFixed(1) + '%';
-    setField('pipeline_pct', pct, null);
-    setField('pipeline_label', fmtVal(q1total) + ' active pipeline', null);
-    const barPct = ((q1total / newGoal) * 100).toFixed(1) + '%';
+  // Total confirmed = floor + q1total
+  const totalConf = floorTotal + q1total;
+  if (totalConf > 0) {
+    sf('total_confirmed', totalConf, exact);
+    sf('revenue_confirmed', totalConf, abbrev); // update spotlight too
+  }
+
+  // Pipeline % progress
+  const newGoal = parseFloat(v.new_revenue_goal)||2000000;
+  if (q1total > 0) {
+    const pct = ((q1total/newGoal)*100).toFixed(1);
+    sf('pipeline_pct', pct + '%', null);
+    sf('pipeline_label', exact(q1total) + ' active pipeline', null);
     document.querySelectorAll('[data-field="pipeline_bar"]').forEach(el => {
-      el.style.width = barPct;
+      el.style.width = pct + '%';
     });
   }
 
-  // Still needed = new_revenue_goal - q1total
-  if (newGoal && q1total >= 0) {
-    const stillNeeded = newGoal - q1total;
-    setField('still_needed', stillNeeded, v => fmtVal(v, true));
-  }
+  // Still needed
+  const stillNeeded = newGoal - q1total;
+  if (stillNeeded >= 0) sf('still_needed', stillNeeded, exact);
 
-  // Revenue confirmed spotlight
-  const confirmed = parseFloat(v.revenue_confirmed) || 0;
-  if (confirmed > 0) {
-    setField('revenue_confirmed', confirmed, v => fmtVal(v, true));
-  }
 }
 
 function showStatus(ok, msg) {
