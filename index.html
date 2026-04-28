@@ -1095,11 +1095,12 @@ new Chart(document.getElementById('cFTE'), {
         borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
         pointBackgroundColor:C.teal, pointRadius:4, yAxisID:'y2', tension:0.3,
         spanGaps:false },
-      { type:'line', label:'FTE Q2 Projection', data:[null,null,null,null,null,10,11],
+      { type:'line', label:'FTE Q2 Projection', data:[null,null,null,null,12,10,11],
         borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
         borderDash:[6,4],
-        pointBackgroundColor:[null,null,null,null,null,C.teal,C.teal],
-        pointRadius:[0,0,0,0,0,4,4],
+        pointBackgroundColor:[null,null,null,null,null,null,C.teal],
+        pointBorderColor:[null,null,null,null,null,null,C.teal],
+        pointRadius:[0,0,0,0,0,0,4],
         yAxisID:'y2', tension:0.3, fill:false,
         spanGaps:true }
     ]
