@@ -906,19 +906,19 @@ function checkPassword() {
   </div>
   <div class="row row-3">
     <div class="card">
-      <div class="card-ttl">Capital Deployed — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="card-ttl">Capital Deployed — Annual & Cumulative</div>
       <div class="chart-wrap" style="height:220px; overflow:hidden; max-width:100%;"><canvas id="cCapital"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.19M</div><div class="l">Total through 2025</div></div>
-        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed_cumulative_q1">$8.39M</div><div class="l">Est. through Q1 '26</div></div>
+        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.25M</div><div class="l">Total through 2025</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed_cumulative_q1">$8.25M</div><div class="l">Through Q1 '26</div></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-ttl">Businesses Funded — Annual & Cumulative <span class="ctag">Q1 '26 MOCK</span></div>
+      <div class="card-ttl">Businesses Funded — Annual & Cumulative</div>
       <div class="chart-wrap" style="height:220px; overflow:hidden; max-width:100%;"><canvas id="cBizFunded"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v" data-field="biz_funded_cumulative">191</div><div class="l">Funded through 2025</div></div>
-        <div class="stat-box gold-box"><div class="v">⚑ TBD</div><div class="l">Q1 '26 · Need from Lending</div></div>
+        <div class="stat-box"><div class="v" data-field="biz_funded_2025">191</div><div class="l">Funded through 2025</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="biz_funded_q1">2</div><div class="l">Q1 2026 · Businesses Funded</div></div>
       </div>
     </div>
     <div class="card">
@@ -1080,7 +1080,7 @@ new Chart(document.getElementById('cMargin'), {
 new Chart(document.getElementById('cFTE'), {
   type: 'bar',
   data: {
-    labels: ['2021','2022','2023','2024','2025','2026P','2027P'],
+    labels: ['2021','2022','2023','2024','2025','Q1 2026','Q2 2026P'],
     datasets: [
       { label:'Rev / FTE — Actual', data:[28378,51603,86052,110014,149976,null,null],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,null,null],
@@ -1091,15 +1091,32 @@ new Chart(document.getElementById('cFTE'), {
         pointBackgroundColor:[null,null,null,null,C.gold,C.gold,C.gold],
         pointRadius:[0,0,0,0,5,5,5],
         type:'line', yAxisID:'y1', tension:0.3, fill:false },
-      { type:'line', label:'FTE Count', data:[3,11,18,19,12,11,null],
+      { type:'line', label:'FTE Count', data:[3,11,18,19,12,10,null],
         borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
-        pointBackgroundColor:C.teal, pointRadius:4, yAxisID:'y2', tension:0.3 }
+        pointBackgroundColor:C.teal, pointRadius:4, yAxisID:'y2', tension:0.3,
+        spanGaps:false },
+      { type:'line', label:'FTE Q2 Projection', data:[null,null,null,null,null,10,11],
+        borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
+        borderDash:[6,4],
+        pointBackgroundColor:[null,null,null,null,null,C.teal,C.teal],
+        pointRadius:[0,0,0,0,0,4,4],
+        yAxisID:'y2', tension:0.3, fill:false,
+        spanGaps:true }
     ]
   },
   options: {
     responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}},
-      tooltip:{ callbacks:{ label: ctx => ctx.datasetIndex===0 ? ` Rev/FTE: ${fmt(ctx.parsed.y)}` : ` FTEs: ${ctx.parsed.y}` } }
+      tooltip:{ callbacks:{ 
+        label: ctx => {
+          if (ctx.parsed.y === null || ctx.parsed.y === undefined) return null;
+          if (ctx.datasetIndex === 0) return ` Rev/FTE (Actual): $${Math.round(ctx.parsed.y).toLocaleString()}`;
+          if (ctx.datasetIndex === 1) return ` Rev/FTE (Projected): $${Math.round(ctx.parsed.y).toLocaleString()}`;
+          if (ctx.datasetIndex === 2) return ` FTE Count: ${ctx.parsed.y}`;
+          if (ctx.datasetIndex === 3) return ` FTE Count (Q2 Projection): ${ctx.parsed.y}`;
+          return null;
+        }
+      } }
     },
     scales: {
       x:{ grid:{display:false}, border:{display:false} },
@@ -1147,7 +1164,7 @@ new Chart(document.getElementById('cFTE'), {
 new Chart(document.getElementById('cCost'), {
   type: 'line',
   data: {
-    labels: ['2021','2022','2023','2024','2025','2026P','2027P'],
+    labels: ['2021','2022','2023','2024','2025','Q1 2026','Q2 2026P'],
     datasets: [
       {
         label:'Cost / Entrepreneur (Actuals)',
@@ -1164,6 +1181,8 @@ new Chart(document.getElementById('cCost'), {
         borderColor: C.red+'88', backgroundColor:'transparent',
         borderWidth:2, borderDash:[6,4],
         pointBackgroundColor:[null,null,null,null,C.red,C.gold,C.gold],
+        pointBorderColor:[null,null,null,null,C.red,C.gold,C.gold],
+        pointBorderWidth:2,
         pointRadius:[0,0,0,0,5,5,5],
         fill:false, tension:0.3, spanGaps:true
       }
@@ -1191,10 +1210,10 @@ new Chart(document.getElementById('cCapital'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026'],
     datasets: [
-      { label:'Deployed (Year)', data:[112500,1962196,4200000,1910899,425000],
+      { label:'Deployed (Year)', data:[112500,1962196,4200000,1910899,200000],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.gold],
         borderRadius:5, yAxisID:'y1' },
-      { type:'line', label:'Cumulative', data:[112500,2074696,6274696,8185595,8610595],
+      { type:'line', label:'Cumulative', data:[112500,2074696,6274696,8185595,8245421],
         borderColor:C.teal, backgroundColor:'transparent',
         borderWidth:2, pointBackgroundColor:C.teal, pointRadius:4,
         yAxisID:'y2', tension:0.3 }
@@ -1220,10 +1239,10 @@ new Chart(document.getElementById('cBizFunded'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026'],
     datasets: [
-      { label:'Funded (Year)', data:[25,38,77,51,14],
+      { label:'Funded (Year)', data:[25,38,77,51,2],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.gold],
         borderRadius:5, yAxisID:'y1' },
-      { type:'line', label:'Cumulative', data:[25,63,140,191,205],
+      { type:'line', label:'Cumulative', data:[25,63,140,191,193],
         borderColor:C.teal, backgroundColor:'transparent',
         borderWidth:2, pointBackgroundColor:C.teal, pointRadius:4,
         yAxisID:'y2', tension:0.3 }
@@ -1451,8 +1470,35 @@ function applyValues(v) {
 
   // ── FUND PERFORMANCE ──
   sf('capital_cumulative',       v.capital_cumulative,  abbrev);
+  // Update capital chart with live data
+  if (v.capital_deployed) updateChart('cCapital', 0, 4, num(v.capital_deployed));
+  if (v.capital_cumulative) {
+    // Use confirmed cumulative directly from sheet (P2)
+    updateChart('cCapital', 1, 4, num(v.capital_cumulative));
+    sf('capital_deployed_cumulative_q1', v.capital_cumulative, abbrev);
+  }
+  // Historical capital bars from sheet
+  if (v.cap_2022) updateChart('cCapital', 0, 0, num(v.cap_2022));
+  if (v.cap_2023) updateChart('cCapital', 0, 1, num(v.cap_2023));
+  if (v.cap_2024) updateChart('cCapital', 0, 2, num(v.cap_2024));
+  if (v.cap_2025) updateChart('cCapital', 0, 3, num(v.cap_2025));
+  if (v.cap_cum_2025) updateChart('cCapital', 1, 3, num(v.cap_cum_2025));
   sf('biz_funded_cumulative',    v.biz_funded_cumulative, null);
   sf('delinquency',              v.delinquency,         null);
+  sf('biz_funded_q1',            v.biz_funded_period,   null);
+  // Update biz_funded_2025 from historical
+  if (v.biz_2025) sf('biz_funded_2025', v.biz_2025, null);
+  // Update chart with live data
+  if (v.biz_funded_period) updateChart('cBizFunded', 0, 4, num(v.biz_funded_period));
+  if (v.biz_funded_cumulative) {
+    updateChart('cBizFunded', 1, 4, num(v.biz_funded_cumulative));
+    sf('biz_funded_cumulative', v.biz_funded_cumulative, null);
+  }
+  // Historical biz funded bars
+  if (v.biz_2022) updateChart('cBizFunded', 0, 0, num(v.biz_2022));
+  if (v.biz_2023) updateChart('cBizFunded', 0, 1, num(v.biz_2023));
+  if (v.biz_2024) updateChart('cBizFunded', 0, 2, num(v.biz_2024));
+  if (v.biz_2025) updateChart('cBizFunded', 0, 3, num(v.biz_2025));
   // Q1 cumulative = historical cumulative + Q1 deployed
   const cumHist = parseFloat(v.capital_cumulative) || 0;
   const capQ1   = parseFloat(v.capital_deployed)   || 0;
