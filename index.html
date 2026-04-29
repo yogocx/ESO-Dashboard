@@ -1428,7 +1428,7 @@ function applyValues(v) {
   const m2025 = parseMargin(v.net_margin_2025); if (m2025 !== null) updateChart('cMargin', 0, 3, m2025);
   // Q1 2026 — single dataset, segment config handles dashed styling
   const mQ1 = parseMargin(v.net_margin);
-  if (mQ1 !== null) updateChart('cMargin', 0, 4, mQ1);if no value
+  if (mQ1 !== null) updateChart('cMargin', 0, 4, mQ1);
 
   // ── OKR GAUGE ──
   const okrQ1 = num(v.okr_q1), okrTgt = num(v.okr_target)||80;
