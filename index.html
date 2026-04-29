@@ -618,8 +618,7 @@ function checkPassword() {
 </header>
 
 <!-- ══ MOCKUP BANNER ══ -->
-<div class="mock-banner">⚑ &nbsp;<strong>MOCKUP FOR REVIEW:</strong> &nbsp;Values tagged ⚑ MOCK are placeholder estimates pending team verification.
-</div>
+
 
 <!-- ══ SPOTLIGHT: Q1 2026 ══ -->
 <div class="spotlight">
@@ -909,8 +908,8 @@ function checkPassword() {
       <div class="card-ttl">Capital Deployed — Annual & Cumulative</div>
       <div class="chart-wrap" style="height:220px; overflow:visible; max-width:100%;"><canvas id="cCapital"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v" data-field="cap_cum_2025">$8.19M</div><div class="l">Cumulative through 2025</div></div>
-        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed_cumulative_q1">$8.25M</div><div class="l">Cumulative through Q1 2026</div></div>
+        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.25M</div><div class="l">Cumulative Total</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed">$200K</div><div class="l">Q1 2026 · Quarterly Actuals</div></div>
       </div>
     </div>
     <div class="card">
@@ -1061,12 +1060,25 @@ new Chart(document.getElementById('cMargin'), {
   type: 'line',
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026'],
-    datasets: [{
-      label: 'Net Margin %', data: [0.8,12.2,1.6,22.0,0],
-      borderColor: C.gold, backgroundColor: C.gold+'22',
-      borderWidth: 3, pointBackgroundColor: C.gold, pointRadius: 6,
-      fill: true, tension: 0.35
-    }]
+    datasets: [
+      {
+        label: 'Net Margin % (Actual)',
+        data: [0.8,12.2,1.6,22.0,null],
+        borderColor: C.gold, backgroundColor: C.gold+'22',
+        borderWidth: 3, pointBackgroundColor: C.gold, pointRadius: 6,
+        fill: true, tension: 0.35, spanGaps: false
+      },
+      {
+        label: 'Q1 2026 (YTD)',
+        data: [null,null,null,22.0,null],
+        borderColor: C.gold+'88', backgroundColor: 'transparent',
+        borderWidth: 2, borderDash: [6,4],
+        pointBackgroundColor: [null,null,null,null,C.gold],
+        pointBorderColor: [null,null,null,null,C.gold],
+        pointRadius: [0,0,0,0,5],
+        fill: false, tension: 0.35, spanGaps: true
+      }
+    ]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
@@ -1409,10 +1421,12 @@ function applyValues(v) {
   const m2023 = parseMargin(v.net_margin_2023); if (m2023 !== null) updateChart('cMargin', 0, 1, m2023);
   const m2024 = parseMargin(v.net_margin_2024); if (m2024 !== null) updateChart('cMargin', 0, 2, m2024);
   const m2025 = parseMargin(v.net_margin_2025); if (m2025 !== null) updateChart('cMargin', 0, 3, m2025);
-  // Q1 2026 — always update even if 0
+  // Q1 2026 — put on dotted dataset (index 1), keep solid dataset null at index 4
   const mQ1 = parseMargin(v.net_margin);
-  if (mQ1 !== null) updateChart('cMargin', 0, 4, mQ1);
-  else updateChart('cMargin', 0, 4, 0); // default to 0 if no value
+  if (mQ1 !== null) {
+    updateChart('cMargin', 1, 4, mQ1);  // dotted line Q1 point
+    updateChart('cMargin', 0, 4, null); // solid line stays null at Q1
+  }if no value
 
   // ── OKR GAUGE ──
   const okrQ1 = num(v.okr_q1), okrTgt = num(v.okr_target)||80;
