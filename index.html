@@ -625,7 +625,7 @@ function checkPassword() {
   <div style="display:grid; grid-template-columns:420px 1fr; gap:36px; align-items:start; margin-bottom:28px;">
     <!-- LEFT: eyebrow + headline -->
     <div>
-      <div class="sp-eyebrow"><div class="sp-dot"></div> Current Moment — Q1 2026 Year-to-Date</div>
+      <div class="sp-eyebrow"><div class="sp-dot"></div> Current Moment — Q2 2026 Year-to-Date</div>
       <div class="sp-headline">The structure is built. The data is accounted for.<br>The systems are live. <em>The scaling phase has begun.</em></div>
     </div>
     <!-- RIGHT: AI Narrative Summary -->
@@ -643,7 +643,7 @@ function checkPassword() {
     <div class="kpi" data-kpi="revenue_confirmed">
       <div class="kpi-lbl">Revenue Confirmed 2026</div>
       <div class="kpi-val">$1.595M</div>
-      <div class="kpi-note">$1.241M floor + $354K confirmed pipeline · Goal: $3.166M</div>
+      <div class="kpi-note" data-field="kpi_note_revenue">Floor + confirmed pipeline · Goal: $3.166M</div>
       <div class="kpi-delta">50.4% of Annual Goal</div>
     </div>
     <div class="kpi" data-kpi="net_income_ytd">
@@ -654,7 +654,7 @@ function checkPassword() {
     </div>
     <div class="kpi">
       <div class="kpi-lbl">Entrepreneurs Served</div>
-      <div class="kpi-val" data-field="entrepreneurs_served">18</div>
+      <div class="kpi-val" data-field="entrepreneurs_served">32</div>
       <div class="kpi-note">Q1 2026 · Cohort, Fund &amp; Monthly Sessions</div>
     </div>
     <div class="kpi">
@@ -754,8 +754,8 @@ function checkPassword() {
   <div class="row row-4">
     <div class="card big-card"><div class="big-n">19</div><div class="big-l">FTEs at Peak · 2024</div></div>
     <div class="card big-card"><div class="big-n" style="color:var(--navy)">10</div><div class="big-l">FTEs Today · Q1 2026</div></div>
-    <div class="card big-card"><div class="big-n">678</div><div class="big-l">Total Entrepreneurs Served thru 2025</div></div>
-    <div class="card big-card"><div class="big-n" style="color:var(--green)">84</div><div class="big-l">NPS Score 2025 · vs. 78 in 2024</div></div>
+    <div class="card big-card"><div class="big-n">693</div><div class="big-l">Total Entrepreneurs Served thru 2025</div></div>
+    <div class="card big-card"><div class="big-n" style="color:var(--green)">88</div><div class="big-l">NPS Score 2025 · vs. 78 in 2024</div></div>
   </div>
 </div>
 
@@ -876,14 +876,14 @@ function checkPassword() {
             <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">Active Contracts</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Carried from 2025</div>
           </div>
-          <div data-field="floor_contracts" style="font-size:16px;font-weight:700;color:#fff;">$346,000</div>
+          <div data-field="floor_contracts" style="font-size:16px;font-weight:700;color:#fff;">$198,646</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
           <div>
             <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">ESO Capital Fund</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Secured fund revenue</div>
           </div>
-          <div data-field="floor_fund" style="font-size:16px;font-weight:700;color:#fff;">$895,000</div>
+          <div data-field="floor_fund" style="font-size:16px;font-weight:700;color:#fff;">$605,868</div>
         </div>
       </div>
 
@@ -918,11 +918,11 @@ function checkPassword() {
           <div style="padding:0 12px 10px;display:flex;gap:8px;">
             <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.35);">Product Sales</div>
-              <div data-field="product_sales" style="font-size:13px;font-weight:700;color:#72D476;">$54,000</div>
+              <div data-field="product_sales" style="font-size:13px;font-weight:700;color:#72D476;">$300,000</div>
             </div>
             <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.35);">Grant Income</div>
-              <div data-field="grant_income" style="font-size:13px;font-weight:700;color:#72D476;">$300,000</div>
+              <div data-field="grant_income" style="font-size:13px;font-weight:700;color:#72D476;">$7,200</div>
             </div>
           </div>
         </div>
@@ -932,7 +932,7 @@ function checkPassword() {
             <div style="font-size:12px;font-weight:600;color:#72D476;">Total Pipeline (Q2 2026)</div>
             <div style="font-size:10px;color:rgba(255,255,255,0.35);">Submitted · Business Development</div>
           </div>
-          <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$1,861,372</div>
+          <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$3,372,000</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
           <div>
@@ -959,16 +959,16 @@ function checkPassword() {
       <div class="card-ttl">Capital Deployed — Annual & Cumulative</div>
       <div class="chart-wrap" style="height:220px; overflow:visible; max-width:100%;"><canvas id="cCapital"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.25M</div><div class="l">Cumulative Total</div></div>
-        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed">$200K</div><div class="l">Q1 2026 · Quarterly Actuals</div></div>
+        <div class="stat-box"><div class="v" data-field="capital_cumulative">$8.43M</div><div class="l">Cumulative Total</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="capital_deployed">$256K</div><div class="l">Q1 2026 · Quarterly Actuals</div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-ttl">Businesses Funded — Annual & Cumulative</div>
       <div class="chart-wrap" style="height:220px; overflow:visible; max-width:100%;"><canvas id="cBizFunded"></canvas></div>
       <div class="stat-pair">
-        <div class="stat-box"><div class="v" data-field="biz_funded_cumulative">193</div><div class="l">Cumulative Total</div></div>
-        <div class="stat-box gold-box"><div class="v" data-field="biz_funded_period">2</div><div class="l">Q1 2026 · Quarterly Actuals</div></div>
+        <div class="stat-box"><div class="v" data-field="biz_funded_cumulative">199</div><div class="l">Cumulative Total</div></div>
+        <div class="stat-box gold-box"><div class="v" data-field="biz_funded_period">6</div><div class="l">Q1 2026 · Quarterly Actuals</div></div>
       </div>
     </div>
     <div class="card">
@@ -978,10 +978,15 @@ function checkPassword() {
         <div class="rep-row"><span class="rep-yr">2023</span><div class="rep-bar-wrap"><div class="rep-bar" style="width:63.7%"></div></div><span class="rep-pct">63.7%</span></div>
         <div class="rep-row"><span class="rep-yr">2024</span><div class="rep-bar-wrap"><div class="rep-bar" style="width:70.9%"></div></div><span class="rep-pct">70.9%</span></div>
         <div class="rep-row"><span class="rep-yr">2025</span><div class="rep-bar-wrap"><div class="rep-bar" style="width:45.1%"></div></div><span class="rep-pct">45.1%</span></div>
+        <div class="rep-row">
+          <span class="rep-yr">Q1 '26</span>
+          <div class="rep-bar-wrap"><div class="rep-bar" style="width:35.6%"></div></div>
+          <span class="rep-pct">35.6%</span>
+        </div>
         <div class="rep-row" style="border-bottom:none">
-          <span class="rep-yr" style="color:var(--gold); font-weight:700">Q1 '26</span>
-          <div class="rep-bar-wrap"><div class="rep-bar" style="width:34.9%; background:var(--gold)"></div></div>
-          <span class="rep-pct" style="color:var(--gold)">34.9%</span>
+          <span class="rep-yr" style="color:var(--gold); font-weight:700">Q2 '26</span>
+          <div class="rep-bar-wrap"><div class="rep-bar" style="width:41%; background:var(--gold)"></div></div>
+          <span class="rep-pct" style="color:var(--gold)">41.0%
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--green-lt);border-radius:8px;margin-top:12px;margin-bottom:10px;">
@@ -989,7 +994,7 @@ function checkPassword() {
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);">Delinquency &gt;30 Days</div>
           <div style="font-size:10px;color:var(--text3);margin-top:2px;">Q1 2026 · Lending Portfolio</div>
         </div>
-        <div data-field="delinquency" style="font-size:24px;font-weight:700;color:var(--green);">&lt;5%</div>
+        <div data-field="delinquency" style="font-size:24px;font-weight:700;color:var(--gold);">16.7%</div>
       </div>
     </div>
   </div>
@@ -1051,7 +1056,7 @@ function checkPassword() {
 <footer>
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:8px;">
     <div>
-      <strong>ESO Executive Performance Overview</strong> · Q1 2026
+      <strong>ESO Executive Performance Overview</strong> · Q2 2026
     </div>
     <div style="display:flex; align-items:center; gap:16px;">
       <span>April 2026 &nbsp;·&nbsp; 🔒 CONFIDENTIAL</span>
@@ -1090,10 +1095,10 @@ new Chart(document.getElementById('cRevenue'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026','Q2 2026'],
     datasets: [
-      { label: 'Revenue ($)', data: [1761500,3855307,3576860,2916185,354000,0],
+      { label: 'Revenue ($)', data: [1761500,3855307,3576860,2916185,477016,804514],
         backgroundColor: [C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.green],
         borderRadius: 5, order: 2 },
-      { label: 'Net Income ($)', data: [13348,472084,56078,642759,0,0],
+      { label: 'Net Income ($)', data: [13348,472084,56078,642759,13122,258060],
         backgroundColor: [C.teal+'99',C.teal+'99',C.teal+'99',C.teal+'CC',C.teal+'99',C.green+'99'],
         borderRadius: 5, order: 3 },
     ]
@@ -1119,7 +1124,7 @@ new Chart(document.getElementById('cMargin'), {
     datasets: [
       {
         label: 'Net Margin %',
-        data: [0.8,12.2,1.6,22.0,10,0],
+        data: [0.8,12.2,1.6,22.0,0,0],
         borderColor: C.gold,
         backgroundColor: C.gold+'22',
         borderWidth: 3,
@@ -1285,10 +1290,10 @@ new Chart(document.getElementById('cCapital'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026','Q2 2026'],
     datasets: [
-      { label:'Deployed (Year)', data:[112500,1962196,4200000,1910899,200000,0],
+      { label:'Deployed (Year)', data:[112500,1962196,4200000,1910899,200000,255739],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.green],
         borderRadius:5, yAxisID:'y1' },
-      { type:'line', label:'Cumulative', data:[112500,2074696,6274696,8185595,8245421,0],
+      { type:'line', label:'Cumulative', data:[112500,2074696,6274696,8185595,8385595,8428421],
         borderColor:C.teal, backgroundColor:'transparent',
         borderWidth:2, pointBackgroundColor:C.teal, pointRadius:4,
         yAxisID:'y2', tension:0.3 }
@@ -1315,10 +1320,10 @@ new Chart(document.getElementById('cBizFunded'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026','Q2 2026'],
     datasets: [
-      { label:'Funded (Year)', data:[25,38,77,51,2,0],
+      { label:'Funded (Year)', data:[25,38,77,51,2,6],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.green],
         borderRadius:5, yAxisID:'y1' },
-      { type:'line', label:'Cumulative', data:[25,63,140,191,193,0],
+      { type:'line', label:'Cumulative', data:[25,63,140,191,193,199],
         borderColor:C.teal, backgroundColor:'transparent',
         borderWidth:2, pointBackgroundColor:C.teal, pointRadius:4,
         yAxisID:'y2', tension:0.3 }
