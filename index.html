@@ -1161,25 +1161,27 @@ new Chart(document.getElementById('cFTE'), {
     datasets: [
       { label:'Rev / FTE — Actual', data:[28378,51603,86052,110014,149976,null,null],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,null,null],
-        borderRadius:4, yAxisID:'y1', type:'bar' },
+        borderRadius:4, yAxisID:'y1', type:'bar', order:3 },
       { label:'Rev / FTE — Projected', data:[null,null,null,null,149976,287818,243333],
         borderColor:C.gold, backgroundColor:C.gold+'22',
-        borderWidth:2, borderDash:[6,4],
+        borderWidth:2.5, borderDash:[6,4],
         pointBackgroundColor:[null,null,null,null,C.gold,C.gold,C.gold],
+        pointBorderColor:[null,null,null,null,C.gold,C.gold,C.gold],
         pointRadius:[0,0,0,0,5,5,5],
-        type:'line', yAxisID:'y1', tension:0.3, fill:false },
-      { type:'line', label:'FTE Count', data:[3,11,18,19,12,10,null],
-        borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
-        pointBackgroundColor:C.teal, pointRadius:4, yAxisID:'y2', tension:0.3,
-        spanGaps:false },
-      { type:'line', label:'FTE Q2 Projection', data:[null,null,null,null,12,10,0],
+        type:'line', yAxisID:'y1', tension:0.3, fill:false, order:1 },
+      { type:'line', label:'FTE Count', data:[3,11,18,19,12,10,10],
+        borderColor:C.teal, backgroundColor:'transparent', borderWidth:2.5,
+        pointBackgroundColor:C.teal, pointBorderColor:C.teal,
+        pointRadius:4, yAxisID:'y2', tension:0.3,
+        spanGaps:false, order:2 },
+      { type:'line', label:'FTE Q2 Proj', data:[null,null,null,null,12,10,null],
         borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
         borderDash:[6,4],
         pointBackgroundColor:[null,null,null,null,null,null,C.teal],
         pointBorderColor:[null,null,null,null,null,null,C.teal],
         pointRadius:[0,0,0,0,0,0,4],
         yAxisID:'y2', tension:0.3, fill:false,
-        spanGaps:true }
+        spanGaps:true, order:2 }
     ]
   },
   options: {
@@ -1256,7 +1258,7 @@ new Chart(document.getElementById('cCost'), {
       },
       {
         label:'Projected',
-        data:[null,null,null,null,7320,6064,4273],
+        data:[null,null,null,null,7320,6064,null],
         borderColor: C.red+'88', backgroundColor:'transparent',
         borderWidth:2, borderDash:[6,4],
         pointBackgroundColor:[null,null,null,null,C.red,C.gold,C.gold],
@@ -1347,11 +1349,10 @@ new Chart(document.getElementById('cCulture'), {
   data: {
     labels: ['Job Satisfaction', 'Leadership Trust', 'Communication', 'DEI & Values', 'Well-Being'],
     datasets: [
-      { label: '2023', data: [3.8, 2.4, 2.1, 4.2, 2.6],
-        backgroundColor: '#1A2E1C', borderRadius: 4, borderSkipped: false },
-      { label: '2024', data: [3.17, 2.83, 2.03, 3.95, 2.97],
+      
+      { label: '2024', data: [3.2, 2.6, 2.1, 3.3, 3.3],
         backgroundColor: '#2A5A2E', borderRadius: 4, borderSkipped: false },
-      { label: '2025', data: [3.5, 3.2, 2.4, 3.5, 3.3],
+      { label: '2025', data: [3.5, 3.2, 2.4, 3.5, 3.7],
         backgroundColor: '#2E7D32', borderRadius: 4, borderSkipped: false },
       { label: 'Q2 2026', data: [4.4, 4.4, 4.4, 4.5, 3.7],
         backgroundColor: '#52B856', borderRadius: 4, borderSkipped: false },
@@ -1571,6 +1572,21 @@ function applyValues(v) {
 
   // ── OPERATIONAL ──
   sf('fte_count',       v.fte_count,       null);
+  // Update FTE chart — dataset 2 is FTE Count line
+  // Index 5 = Q1 2026, Index 6 = Q2 2026
+  if (v.fte_count) {
+    updateChart('cFTE', 2, 5, num(v.fte_count)); // Q1 historical
+    updateChart('cFTE', 2, 6, num(v.fte_count)); // Q2 active (same FTE count)
+    updateChart('cFTE', 3, 5, num(v.fte_count)); // projection line Q1
+    updateChart('cFTE', 3, 6, num(v.fte_count)); // projection line Q2
+  }
+  // Update Rev/FTE bar — index 5 = Q1, index 6 = Q2
+  if (v.rev_per_fte) {
+    updateChart('cFTE', 0, 5, num(v.rev_per_fte_q1));
+    updateChart('cFTE', 0, 6, num(v.rev_per_fte));
+    updateChart('cFTE', 1, 5, num(v.rev_per_fte_q1) || num(v.rev_per_fte));
+    updateChart('cFTE', 1, 6, num(v.rev_per_fte));
+  }
   sf('fte_peak',        v.fte_peak,        null);
   sf('nps_current',     v.nps_current,     null);
   sf('total_entrepreneurs', v.total_entrepreneurs, v => parseInt(v).toLocaleString());
