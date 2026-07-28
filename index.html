@@ -644,7 +644,7 @@ function checkPassword() {
       <div class="kpi-lbl">Revenue Confirmed 2026</div>
       <div class="kpi-val" data-field="revenue_confirmed">$1.90M</div>
       <div class="kpi-note" data-field="kpi_note_revenue">Floor + confirmed pipeline · Goal: $3.166M</div>
-      <div class="kpi-delta">60.1% of Annual Goal</div>
+      <div class="kpi-delta">40.6% of Annual Goal</div>
     </div>
     <div class="kpi" data-kpi="net_income_ytd">
       <div class="kpi-lbl">Net Income YTD</div>
@@ -832,117 +832,102 @@ function checkPassword() {
       </div>
       <div style="text-align:right;">
         <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:6px;">Total Confirmed to Date</div>
-        <div data-field="revenue_confirmed" style="font-size:38px;font-weight:700;color:#72D476;line-height:1;">$1,595,000</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:5px;">50.4% of total goal — before pipeline closes</div>
+        <div data-field="total_confirmed" style="font-size:38px;font-weight:700;color:#72D476;line-height:1;">$1,284,054</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:5px;">40.6% of total goal</div>
       </div>
     </div>
 
     <!-- Master progress bar -->
     <div style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:7px;">
-        <span>$0</span><span>$1,595,000 confirmed</span><span>$3,166,000</span>
+        <span>$0</span><span data-field="pipeline_label">$1,284,054 confirmed</span><span>$3,166,000</span>
       </div>
       <div style="height:12px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;position:relative;">
-        <!-- Existing floor: $1,241,000 / $3,166,000 = 39.2% -->
-        <div style="position:absolute;left:0;top:0;height:100%;width:39.2%;background:#2A4F96;border-radius:6px 0 0 6px;"></div>
-        <!-- New commitments: $354,000 / $3,166,000 = 11.2% -->
-        <div style="position:absolute;left:39.2%;top:0;height:100%;width:11.2%;background:#52B856;"></div>
-        <!-- Remaining gap -->
+        <!-- Fund Unit Income: $1,054,998 / $3,166,000 = 33.3% -->
+        <div style="position:absolute;left:0;top:0;height:100%;width:33.3%;background:#2A4F96;border-radius:6px 0 0 6px;"></div>
+        <!-- Business Services: $229,056 / $3,166,000 = 7.2% -->
+        <div style="position:absolute;left:33.3%;top:0;height:100%;width:7.2%;background:#52B856;"></div>
       </div>
       <div style="display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,0.55);">
-          <div style="width:10px;height:10px;background:#2A4F96;border-radius:2px;flex-shrink:0;"></div>Existing Floor — $1,241,000
+          <div style="width:10px;height:10px;background:#2A4F96;border-radius:2px;flex-shrink:0;"></div>Fund Unit Income — $1,054,998
         </div>
         <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,0.55);">
-          <div style="width:10px;height:10px;background:#52B856;border-radius:2px;flex-shrink:0;"></div>New Commitments — $354,000
+          <div style="width:10px;height:10px;background:#52B856;border-radius:2px;flex-shrink:0;"></div>Business Services Revenue — $229,056
         </div>
-        <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,0.35);">
-          <div style="width:10px;height:10px;background:rgba(255,255,255,0.1);border-radius:2px;border:1px solid rgba(255,255,255,0.2);flex-shrink:0;"></div>Remaining Gap — $1,571,000
+        <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,0.55);">
+          <div style="width:10px;height:10px;background:rgba(255,255,255,0.1);border-radius:2px;flex-shrink:0;"></div>Remaining Gap — $1,881,946
         </div>
       </div>
     </div>
 
-    <!-- Two column breakdown -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- CONFIRMED FLOOR -->
+    <div class="row row-2eq" style="margin-top:0;">
 
-      <!-- LEFT: Existing Floor -->
-      <div style="background:rgba(42,100,46,0.35);border:1px solid rgba(82,184,86,0.3);border-radius:10px;padding:18px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:4px;">Confirmed Floor</div>
-        <div style="font-size:24px;font-weight:700;color:#fff;margin-bottom:2px;">$1,241,000</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:14px;">Existing revenue — does not count toward $2M new goal</div>
-        <!-- Breakdown items -->
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;margin-bottom:8px;">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">Active Contracts</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);">Carried from 2025</div>
+      <!-- LEFT: Fund Unit Income -->
+      <div style="background:rgba(255,255,255,0.06); border-radius:12px; padding:20px;">
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Fund Unit Income</div>
+        <div data-field="floor_total" style="font-size:20px;font-weight:700;color:#fff;margin-bottom:2px;">$1,054,998</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);">Brokerage, loan interest, and fund management fees, H1 2026</div>
+        <div style="margin-top:14px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);">Brokerage &amp; Loan Interest</div>
+            <div data-field="floor_contracts" style="font-size:16px;font-weight:700;color:#fff;">$118,542</div>
           </div>
-          <div data-field="floor_contracts" style="font-size:16px;font-weight:700;color:#fff;">$198,646</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">ESO Capital Fund</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);">Secured fund revenue</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);">Fund Management Fees</div>
+            <div data-field="floor_fund" style="font-size:16px;font-weight:700;color:#fff;">$936,456</div>
           </div>
-          <div data-field="floor_fund" style="font-size:16px;font-weight:700;color:#fff;">$605,868</div>
         </div>
+        <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.3);">Existing revenue stream · Does not depend on new sales activity</div>
       </div>
 
-      <!-- RIGHT: New Revenue Goal -->
-      <div style="background:rgba(82,184,86,0.10);border:1px solid rgba(82,184,86,0.35);border-radius:10px;padding:18px;">
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(114,212,118,0.8);font-weight:700;margin-bottom:4px;">Net New Revenue Goal</div>
+      <!-- RIGHT: Net New Revenue Goal -->
+      <div style="background:rgba(82,184,86,0.08); border:1px solid rgba(82,184,86,0.2); border-radius:12px; padding:20px;">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Net New Revenue Goal</div>
         <div data-field="new_revenue_goal" style="font-size:24px;font-weight:700;color:#72D476;margin-bottom:2px;">$2,000,000</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:14px;">Must be sourced from new commitments &amp; pipeline</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Must be sourced from Business Services</div>
 
-        <!-- Progress toward $2M -->
-        <div style="margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-            <span style="font-size:11px;color:rgba(255,255,255,0.5);">Active Pipeline — Confirmed Toward Goal</span>
-            <span style="font-size:14px;font-weight:700;color:#72D476;">17.7%</span>
-          </div>
-          <div style="height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
-            <div data-field="pipeline_bar" style="height:100%;width:17.7%;background:#52B856;border-radius:4px;"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;">
-            <span data-field="pipeline_label">$354,000 active pipeline</span><span>$2,000,000 target</span>
-          </div>
-        </div>
-
-        <div style="background:rgba(82,184,86,0.12);border-radius:7px;border:1px solid rgba(82,184,86,0.3);margin-bottom:8px;overflow:hidden;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;">
+        <div style="padding:14px;background:rgba(82,184,86,0.1);border-radius:10px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <div>
-              <div style="font-size:12px;font-weight:600;color:#72D476;">Q1 Confirmed Revenue</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.35);">Counting toward $2M new goal</div>
+              <div style="font-size:12px;font-weight:600;color:#72D476;">Business Services — Recognized</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.35);">11.5% of $2M goal · H1 2026</div>
             </div>
-            <div data-field="q1_confirmed_total" style="font-size:16px;font-weight:700;color:#72D476;">$354,000</div>
+            <div data-field="q1_confirmed_total" style="font-size:16px;font-weight:700;color:#72D476;">$229,056</div>
           </div>
-          <div style="padding:0 12px 10px;display:flex;gap:8px;">
-            <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
-              <div style="font-size:10px;color:rgba(255,255,255,0.35);">Product Sales</div>
-              <div data-field="product_sales" style="font-size:13px;font-weight:700;color:#72D476;">$300,000</div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <div style="flex:1;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:7px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.35);">Closed/Booked · Not Yet Recognized</div>
+              <div data-field="product_sales" style="font-size:13px;font-weight:700;color:#72D476;">$661,200</div>
             </div>
-            <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:7px 10px;">
-              <div style="font-size:10px;color:rgba(255,255,255,0.35);">Grant Income</div>
-              <div data-field="grant_income" style="font-size:13px;font-weight:700;color:#72D476;">$7,200</div>
+            <div style="flex:1;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:7px;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.35);">33.1% of $2M Goal</div>
+              <div style="font-size:13px;font-weight:700;color:rgba(255,200,80,0.8);">Not yet recognized</div>
             </div>
           </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(82,184,86,0.07);border-radius:7px;border:1px solid rgba(82,184,86,0.2);margin-bottom:8px;">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#72D476;">Total Pipeline (Q2 2026)</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);">Submitted · Business Development</div>
+        <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:10px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#72D476;">Total Pipeline (Q2 2026)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.35);">Submitted · Business Development</div>
+            </div>
+            <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$3,372,000</div>
           </div>
-          <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$3,372,000</div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:rgba(255,255,255,0.06);border-radius:7px;">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);">Still Needed</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);">Gap to close ($2M goal − $354K confirmed)</div>
+
+        <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;color:rgba(255,255,255,0.7);">Still Needed</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);">Against booked · Against recognized</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);">$1,338,800 booked · <span style="color:rgba(255,255,255,0.4);">$1,770,944 recognized</span></div>
           </div>
-          <div data-field="still_needed" style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.6);">$1,646,000</div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -1159,52 +1144,35 @@ new Chart(document.getElementById('cFTE'), {
   data: {
     labels: ['2021','2022','2023','2024','2025','Q1 2026','Q2 2026'],
     datasets: [
-      { label:'Rev / FTE — Actual', data:[28378,51603,86052,110014,149976,null,null],
-        backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,null,null],
+      { label:'Rev / FTE — Actual', data:[28378,51603,86052,110014,149976,null,287818],
+        backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,null,C.green],
         borderRadius:4, yAxisID:'y1', type:'bar', order:3 },
-      { label:'Rev / FTE — Projected', data:[null,null,null,null,149976,287818,243333],
-        borderColor:C.gold, backgroundColor:C.gold+'22',
-        borderWidth:2.5, borderDash:[6,4],
-        pointBackgroundColor:[null,null,null,null,C.gold,C.gold,C.gold],
-        pointBorderColor:[null,null,null,null,C.gold,C.gold,C.gold],
-        pointRadius:[0,0,0,0,5,5,5],
-        type:'line', yAxisID:'y1', tension:0.3, fill:false, order:1 },
+
       { type:'line', label:'FTE Count', data:[3,11,18,19,12,10,10],
         borderColor:C.teal, backgroundColor:'transparent', borderWidth:2.5,
         pointBackgroundColor:C.teal, pointBorderColor:C.teal,
-        pointRadius:4, yAxisID:'y2', tension:0.3,
-        spanGaps:false, order:2 },
-      { type:'line', label:'FTE Q2 Proj', data:[null,null,null,null,12,10,null],
-        borderColor:C.teal, backgroundColor:'transparent', borderWidth:2,
-        borderDash:[6,4],
-        pointBackgroundColor:[null,null,null,null,null,null,C.teal],
-        pointBorderColor:[null,null,null,null,null,null,C.teal],
-        pointRadius:[0,0,0,0,0,0,4],
-        yAxisID:'y2', tension:0.3, fill:false,
-        spanGaps:true, order:2 }
+        pointRadius:4, yAxisID:'y2', tension:0.3, order:2 }
     ]
   },
   options: {
     responsive:true, maintainAspectRatio:false,
     animation: { duration: 900, easing: 'easeOutQuart' },
-    plugins:{ legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11}}},
-      tooltip:{ callbacks:{ 
-        label: ctx => {
-          if (ctx.parsed.y === null || ctx.parsed.y === undefined) return null;
-          if (ctx.datasetIndex === 0) return ` Rev/FTE (Actual): $${Math.round(ctx.parsed.y).toLocaleString()}`;
-          if (ctx.datasetIndex === 1) return ` Rev/FTE (Projected): $${Math.round(ctx.parsed.y).toLocaleString()}`;
-          if (ctx.datasetIndex === 2) return ` FTE Count: ${ctx.parsed.y}`;
-          if (ctx.datasetIndex === 3) return ` FTE Count (Q2 Projection): ${ctx.parsed.y}`;
-          return null;
-        }
-      } }
+    plugins: {
+      legend: { position:'bottom', labels:{ boxWidth:10, padding:10, font:{ size:11 } } },
+      tooltip: { callbacks: { label: ctx => {
+        if (ctx.parsed.y === null || ctx.parsed.y === undefined) return null;
+        if (ctx.datasetIndex <= 1) return ' Rev/FTE: $' + Math.round(ctx.parsed.y).toLocaleString();
+        return ' FTE Count: ' + ctx.parsed.y;
+      }}}
     },
     scales: {
-      x:{ grid:{display:false}, border:{display:false} },
-      y1:{ type:'linear', position:'left', grid:{color:C.border}, border:{display:false},
-           ticks:{ callback: v => fmt(v) } },
-      y2:{ type:'linear', position:'right', grid:{display:false}, border:{display:false},
-           ticks:{ callback: v => v+' FTE' }, min:0, max:28 }
+      x: { grid:{ display:false }, border:{ display:false } },
+      y1: { type:'linear', position:'left', min:0, max:400000,
+            grid:{ color:C.border }, border:{ display:false },
+            ticks:{ callback: v => fmt(v) } },
+      y2: { type:'linear', position:'right', min:0, max:40,
+            grid:{ display:false }, border:{ display:false },
+            ticks:{ stepSize:5, callback: v => Number.isInteger(v) ? v+' FTE' : '' } }
     }
   }
 });
@@ -1309,6 +1277,7 @@ new Chart(document.getElementById('cCapital'), {
     scales: {
       x:{ grid:{display:false}, border:{display:false} },
       y1:{ type:'linear', position:'left', grid:{color:C.border}, border:{display:false},
+           min:0, max:400000,
            ticks:{ callback: v => fmt(v) } },
       y2:{ type:'linear', position:'right', grid:{display:false}, border:{display:false},
            ticks:{ callback: v => fmt(v) } }
@@ -1579,18 +1548,13 @@ function applyValues(v) {
   sf('fte_count',       v.fte_count,       null);
   // Update FTE chart — dataset 2 is FTE Count line
   // Index 5 = Q1 2026, Index 6 = Q2 2026
+  // Update FTE chart — dataset 0 = bars (Rev/FTE), dataset 1 = FTE Count line
   if (v.fte_count) {
-    updateChart('cFTE', 2, 5, num(v.fte_count)); // Q1 historical
-    updateChart('cFTE', 2, 6, num(v.fte_count)); // Q2 active (same FTE count)
-    updateChart('cFTE', 3, 5, num(v.fte_count)); // projection line Q1
-    updateChart('cFTE', 3, 6, num(v.fte_count)); // projection line Q2
+    updateChart('cFTE', 1, 5, num(v.fte_count)); // Q1 FTE count
+    updateChart('cFTE', 1, 6, num(v.fte_count)); // Q2 FTE count (same)
   }
-  // Update Rev/FTE bar — index 5 = Q1, index 6 = Q2
   if (v.rev_per_fte) {
-    updateChart('cFTE', 0, 5, num(v.rev_per_fte_q1));
-    updateChart('cFTE', 0, 6, num(v.rev_per_fte));
-    updateChart('cFTE', 1, 5, num(v.rev_per_fte_q1) || num(v.rev_per_fte));
-    updateChart('cFTE', 1, 6, num(v.rev_per_fte));
+    updateChart('cFTE', 0, 6, num(v.rev_per_fte)); // Q2 Rev/FTE bar
   }
   sf('fte_peak',        v.fte_peak,        null);
   sf('nps_current',     v.nps_current,     null);
@@ -1689,7 +1653,7 @@ function applyValues(v) {
   sf('new_revenue_goal',   v.new_revenue_goal,   exact);
   sf('floor_contracts',    v.floor_contracts,    exact);
   sf('floor_fund',         v.floor_fund,         exact);
-  sf('product_sales',      v.product_sales,      exact);
+  sf('product_sales',      661200,               exact);  // Closed/booked not yet recognized
   sf('grant_income',       v.grant_income,       exact);
   sf('pipeline_value',     v.pipeline_value,     exact);
 
@@ -1697,20 +1661,23 @@ function applyValues(v) {
   const fc = parseFloat(v.floor_contracts)||0;
   const ff = parseFloat(v.floor_fund)||0;
   const floorTotal = fc + ff;
-  if (floorTotal > 0) sf('floor_total', floorTotal, exact);
+  // H1 2026 Fund Unit Income — Martha's verified H1 total
+  sf('floor_total', 1054998, exact);
 
   // Q1 confirmed total = product_sales + grant_income
   const ps = parseFloat(v.product_sales)||0;
   const gi = parseFloat(v.grant_income)||0;
   const q1total = ps + gi;
-  if (q1total > 0) sf('q1_confirmed_total', q1total, exact);
+  // H1 2026 Business Services — Martha's verified figures
+  sf('q1_confirmed_total', 229056, exact);  // Recognized revenue
 
-  // Total confirmed = floor + q1total
-  const totalConf = floorTotal + q1total;
-  if (totalConf > 0) {
-    sf('total_confirmed', totalConf, exact);
-    sf('revenue_confirmed', totalConf, abbrev); // update spotlight too
-  }
+  // H1 2026 confirmed totals — Martha's verified figures
+  const H1_CONFIRMED = 1284054;  // Fund Unit Income + Business Services H1
+  const H1_PCT = '40.6%';
+  sf('total_confirmed', H1_CONFIRMED, exact);
+  sf('revenue_confirmed', H1_CONFIRMED, abbrev);
+  // Update the % label
+  document.querySelectorAll('[data-field="pipeline_pct"]').forEach(el => el.textContent = H1_PCT);
 
   // Pipeline % progress
   const newGoal = parseFloat(v.new_revenue_goal)||2000000;
@@ -1738,14 +1705,14 @@ function applyValues(v) {
   sf('c5_score', v.c5_score, null);
   // Update culture chart with live 2025 data
   // Culture chart dataset 2 = 2025 (index 2), update from sheet
-  // Culture 2025 dataset (index 2) and Q2 2026 dataset (index 3)
+  // Culture: index 0=2024, index 1=2025, index 2=Q2 2026
   const c2025 = [v.c1_2025, v.c2_2025, v.c3_2025, v.c4_2025, v.c5_2025];
   c2025.forEach((s, i) => {
-    if (s !== undefined && s !== '') updateChart('cCulture', 2, i, parseFloat(s));
+    if (s !== undefined && s !== '') updateChart('cCulture', 1, i, parseFloat(s));
   });
   const cScores = [v.c1_score, v.c2_score, v.c3_score, v.c4_score, v.c5_score];
   cScores.forEach((s, i) => {
-    if (s !== undefined && s !== '') updateChart('cCulture', 3, i, parseFloat(s));
+    if (s !== undefined && s !== '') updateChart('cCulture', 2, i, parseFloat(s));
   });
   // Composite score
   const scores = [v.c1_score,v.c2_score,v.c3_score,v.c4_score,v.c5_score]
