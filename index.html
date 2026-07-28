@@ -1525,13 +1525,13 @@ function applyValues(v) {
   const m2023 = parseMargin(v.net_margin_2023); if (m2023 !== null) updateChart('cMargin', 0, 1, m2023);
   const m2024 = parseMargin(v.net_margin_2024); if (m2024 !== null) updateChart('cMargin', 0, 2, m2024);
   const m2025 = parseMargin(v.net_margin_2025); if (m2025 !== null) updateChart('cMargin', 0, 3, m2025);
-  // Q1 2026 — single dataset, segment config handles dashed styling
-  const mQ1 = parseMargin(v.net_margin);
-  if (mQ1 !== null) updateChart('cMargin', 0, 4, mQ1);
-  if (v.net_margin_q2) {
-    const mQ2 = parseMargin(v.net_margin_q2);
-    if (mQ2 !== null) updateChart('cMargin', 0, 5, mQ2);
-  }
+  // net_margin = active period (Q2 when Q2 is active) → index 5
+  // net_margin_q1 = Q1 historical from histFields → index 4
+  const mActive = parseMargin(v.net_margin);
+  const mQ1hist = parseMargin(v.net_margin_q1);
+  if (mQ1hist !== null) updateChart('cMargin', 0, 4, mQ1hist); // Q1 historical
+  else updateChart('cMargin', 0, 4, 0); // default Q1 to 0%
+  if (mActive !== null) updateChart('cMargin', 0, 5, mActive); // Q2 active
   // Q2 margin on dotted line index 5
   if (v.net_margin_q2) {
     const mQ2 = parseMargin(v.net_margin_q2);
