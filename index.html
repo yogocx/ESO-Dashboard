@@ -754,12 +754,19 @@ function checkPassword() {
   <div class="row row-4">
     <div class="card big-card"><div class="big-n">19</div><div class="big-l">FTEs at Peak · 2024</div></div>
     <div class="card big-card"><div class="big-n" style="color:var(--navy)">10</div><div class="big-l">FTEs Today · Q2 2026</div></div>
-    <div class="card big-card"><div class="big-n">693</div><div class="big-l">Total Entrepreneurs Served thru 2025</div></div>
-    <div class="card big-card"><div class="big-n" style="color:var(--green)">88</div><div class="big-l">NPS Score 2025 · vs. 78 in 2024</div></div>
+    <div class="card big-card"><div class="big-n">693</div><div class="big-l">Total Entrepreneurs Served to Date</div></div>
+    <div class="card big-card"><div class="big-n" style="color:var(--green)">88</div><div class="big-l">NPS 2026</div></div>
   </div>
 </div>
 
 
+
+<!-- ══ NPS TREND ══ -->
+<div style="background:#fff; border-radius:16px; padding:24px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+  <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6B9A70;font-weight:600;margin-bottom:4px;">NPS SCORE TREND</div>
+  <div style="font-size:12px;color:#9CA3AF;margin-bottom:16px;">2024 through 2026 · Annual Survey</div>
+  <div style="position:relative;height:160px;"><canvas id="cNPS" role="img" aria-label="NPS trend line chart"></canvas></div>
+</div>
 
 <!-- ══ CULTURE SCORES — inside Operational Maturity ══ -->
 <div class="sec">
@@ -1350,7 +1357,43 @@ new Chart(document.getElementById('cCulture'), {
       }
     }
   }
+})
+
+// ── NPS TREND CHART ──
+new Chart(document.getElementById('cNPS'), {
+  type: 'line',
+  data: {
+    labels: ['2024', '2025', 'Q2 2026'],
+    datasets: [{
+      label: 'NPS Score',
+      data: [78, 84, 88],
+      borderColor: '#52B856',
+      backgroundColor: '#52B856' + '22',
+      borderWidth: 3,
+      pointBackgroundColor: ['#2E7D32', '#2E7D32', '#52B856'],
+      pointBorderColor: ['#2E7D32', '#2E7D32', '#52B856'],
+      pointRadius: 6,
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 900, easing: 'easeOutQuart' },
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ' NPS: ' + ctx.parsed.y } }
+    },
+    scales: {
+      x: { grid: { display: false }, border: { display: false },
+           ticks: { color: '#6B7280', font: { size: 12, weight: '600' } } },
+      y: { min: 60, max: 100,
+           grid: { color: 'rgba(82,184,86,0.1)' }, border: { display: false },
+           ticks: { stepSize: 10, color: '#9CA3AF', font: { size: 11 } } }
+    }
+  }
 });
+;
 ;
 </script>
 
@@ -1560,6 +1603,8 @@ function applyValues(v) {
   }
   sf('fte_peak',        v.fte_peak,        null);
   sf('nps_current',     v.nps_current,     null);
+  // Update NPS trend chart Q2 point from sheet
+  if (v.nps_current) updateChart('cNPS', 0, 2, parseFloat(v.nps_current));
   sf('total_entrepreneurs', v.total_entrepreneurs, v => parseInt(v).toLocaleString());
   sf('rev_per_fte',     v.rev_per_fte,     exact);
   sf('rev_per_fte_proj',v.rev_per_fte_proj || v.rev_per_fte, abbrev);
