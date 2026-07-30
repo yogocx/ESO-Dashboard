@@ -1681,19 +1681,7 @@ function applyValues(v) {
   const capQ1   = parseFloat(v.capital_deployed)   || 0;
   if (cumHist && capQ1) sf('capital_deployed_cumulative_q1', cumHist + capQ1, abbrev);
 
-  // Repayment bars — update if data available
-  if (v.repayment_rate) {
-    const pct = parseFloat(v.repayment_rate);
-    document.querySelectorAll('.rep-row').forEach((row, i) => {
-      const yr = row.querySelector('.rep-yr');
-      if (yr && yr.textContent.includes('Q1')) {
-        const bar = row.querySelector('.rep-bar');
-        const label = row.querySelector('.rep-pct');
-        if (bar) bar.style.width = pct + '%';
-        if (label) label.textContent = pct + '%';
-      }
-    });
-  }
+  // Repayment bars — hardcoded confirmed values, no dynamic override
 
   // ── REVENUE GOAL PANEL ──
   sf('total_revenue_goal', v.total_revenue_goal, exact);
