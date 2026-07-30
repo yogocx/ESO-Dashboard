@@ -847,7 +847,7 @@ function checkPassword() {
     <!-- Master progress bar -->
     <div style="margin-bottom:24px;">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:7px;">
-        <span>$0</span><span data-field="pipeline_label">$1,284,054 confirmed</span><span>$3,166,000</span>
+        <span>$0</span><span data-field="pipeline_label">$3,372,000 active pipeline</span><span>$3,166,000</span>
       </div>
       <div style="height:12px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;position:relative;">
         <!-- Fund Unit Income: $1,054,998 / $3,166,000 = 33.3% -->
@@ -1753,7 +1753,7 @@ function applyValues(v) {
   if (q1total > 0) {
     const pct = ((q1total/newGoal)*100).toFixed(1);
     sf('pipeline_pct', pct + '%', null);
-    sf('pipeline_label', '$3,072,000 active pipeline', null);
+    // pipeline_label set by Supabase override below
     document.querySelectorAll('[data-field="pipeline_bar"]').forEach(el => {
       el.style.width = pct + '%';
     });
@@ -1838,22 +1838,98 @@ function showStatus(ok, msg) {
   if (!el) return;
   el.style.color = ok ? 'rgba(82,184,86,0.8)' : 'rgba(255,180,60,0.7)';
   el.textContent = ok
-    ? '✓ YOGO CX CDP · Live · ' + new Date().toLocaleTimeString()
+    ? '✓ YOGO CX CDP · Supabase · ' + new Date().toLocaleTimeString()
     : '⚠ YOGO CX CDP · Cached' + (msg ? ' — ' + msg : '');
 }
 
 async function loadGoogleSheetsData() {
-  console.log('ESO: Fetching from Apps Script...');
+  const SUPABASE_URL = 'https://cwbgnvftzwvvxtrsicku.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3YmdudmZ0end2dnh0cnNpY2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MzIzOTAsImV4cCI6MjA5MjEwODM5MH0.631kkto5q84mZjPQc7oekIPrY2QfWyq02nP0j8tFQ8I';
+  console.log('ESO: Fetching from Supabase...');
   try {
-    const resp = await fetch(APPS_URL);
-    console.log('ESO: Response status:', resp.status);
+    const resp = await fetch(
+      SUPABASE_URL + '/rest/v1/dashboard_metrics?is_active=eq.true&limit=1',
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    console.log('ESO: Data received:', data);
-    applyValues(data);
+    const rows = await resp.json();
+    if (!rows || rows.length === 0) throw new Error('No active quarter found');
+    const d = rows[0];
+    console.log('ESO: Loaded quarter:', d.quarter);
+
+    // Map Supabase fields → applyValues compatible object
+    const v = {
+      period: d.quarter,
+      revenue_confirmed: d.revenue_confirmed,
+      net_income_ytd: d.net_income_ytd,
+      net_margin: d.net_margin_pct ? d.net_margin_pct.toFixed(1) + '%' : null,
+      total_revenue_goal: d.total_revenue_goal,
+      floor_contracts: d.floor_contracts,
+      floor_fund: d.floor_fund,
+      loan_interest_receivable: d.loan_interest_receivable,
+      floor_total: d.fund_unit_income_total,
+      new_revenue_goal: d.new_revenue_goal,
+      product_sales: d.business_services_booked,
+      grant_income: null,
+      pipeline_value: d.pipeline_value,
+      pipeline_label_override: d.pipeline_label,
+      still_needed_booked: d.still_needed_booked,
+      still_needed_recognized: d.still_needed_recognized,
+      okr_q1: d.okr_attainment ? d.okr_attainment.toFixed(0) + '%' : null,
+      okr_target: d.okr_target ? d.okr_target.toFixed(0) + '%' : null,
+      fte_count: d.fte_count,
+      rev_per_fte: d.rev_per_fte,
+      cost_per_entrepreneur: d.cost_per_entrepreneur,
+      nps_current: d.nps_score,
+      total_entrepreneurs: d.total_entrepreneurs,
+      entrepreneurs_served: d.entrepreneurs_served,
+      capital_deployed: d.capital_deployed,
+      capital_cumulative: d.capital_cumulative,
+      active_businesses: d.active_businesses,
+      biz_funded_period: d.businesses_funded_period,
+      biz_funded_cumulative: d.businesses_funded_cumulative,
+      delinquency: d.delinquency_pct ? d.delinquency_pct + '%' : null,
+      automations: d.automations,
+      manual_eliminated: d.manual_eliminated_pct ? d.manual_eliminated_pct + '%' : null,
+      c1_score: d.culture_job_satisfaction,
+      c2_score: d.culture_leadership_trust,
+      c3_score: d.culture_communication,
+      c4_score: d.culture_dei_values,
+      c5_score: d.culture_wellbeing,
+      q1_confirmed: d.business_services_recognized,
+      executive_summary: d.executive_summary,
+    };
+
+    // Update executive summary if provided
+    if (v.executive_summary) {
+      document.querySelectorAll('.exec-summary').forEach(el => el.textContent = v.executive_summary);
+    }
+
+    // Update still needed with both values
+    if (v.still_needed_booked) {
+      document.querySelectorAll('[data-field="still_needed"]').forEach(el => {
+        el.innerHTML = '$' + Math.round(v.still_needed_booked).toLocaleString() + ' booked · <span style="color:rgba(255,255,255,0.4);">$' + Math.round(v.still_needed_recognized).toLocaleString() + ' recognized</span>';
+      });
+    }
+
+    // Override pipeline label if set
+    if (v.pipeline_label_override) {
+      sf('pipeline_label', v.pipeline_label_override, null);
+    }
+
+    // Update active businesses
+    if (v.active_businesses) {
+      document.querySelectorAll('.active-biz').forEach(el => el.textContent = v.active_businesses);
+    }
+
+    // Update q1_confirmed_total (Business Services Recognized)
+    if (v.q1_confirmed) sf('q1_confirmed_total', v.q1_confirmed, exact);
+
+    applyValues(v);
     showStatus(true);
+    console.log('ESO: Dashboard updated from Supabase ✓');
   } catch(e) {
-    console.warn('ESO: Fetch failed —', e.message);
+    console.warn('ESO: Supabase fetch failed —', e.message);
     showStatus(false, e.message);
   }
 }
