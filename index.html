@@ -964,8 +964,8 @@ function checkPassword() {
       </div>
     </div>
   </div>
-  <!-- Row 2: Loan Repayment + Arrears -->
-  <div class="row row-2eq">
+  <!-- Row 2: Loan Repayment + Delinquency + Arrears -->
+  <div class="row row-3">
     <div class="card">
       <div class="card-ttl">Loan Repayment Rate</div>
       <div style="margin-top:8px">
@@ -989,16 +989,29 @@ function checkPassword() {
           <span class="rep-pct" style="color:var(--gold)">40.6%</span>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--green-lt);border-radius:8px;margin-top:12px;margin-bottom:10px;">
-        <div>
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);">Delinquency &gt;30 Days</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px;"><span data-field="period_q">Q3 2026</span> · Lending Portfolio</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px;">Trend: Q1 16.8% · Q2 16.7% · Q3 18.8%</div>
-        </div>
-        <div data-field="delinquency" style="font-size:24px;font-weight:700;color:var(--gold);">18.8%</div>
-      </div>
     </div>
     <div class="card">
+      <div class="card-ttl">Delinquency &gt;30 Days</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin:6px 0 2px;">
+        <div data-field="delinquency" style="font-size:40px;font-weight:700;color:var(--gold);line-height:1;">18.8%</div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);"><span data-field="period_q">Q3 2026</span> · Lending Portfolio</div>
+          <div style="font-size:10px;color:var(--gold);font-weight:700;">▲ 2.1 pts vs Q2</div>
+        </div>
+      </div>
+      <div style="margin:10px 0 10px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;">2026 Quarterly Trend</div>
+        <div class="chart-wrap" style="height:200px; overflow:visible; max-width:100%;"><canvas id="cDelinquency" role="img" aria-label="Delinquency over 30 days by quarter: Q1 16.8%, Q2 16.7%, Q3 18.8%"></canvas></div>
+      </div>
+      <div style="margin-top:4px;">
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;">Q1 2026 · Q2 2026</span><span class="fv">16.8% · 16.7%</span></div>
+        <div class="fin-row"><span class="fl">Loan Repayment · Q3</span><span class="fv">40.6%</span></div>
+      </div>
+      <div style="margin-top:10px; padding:10px 12px; background:var(--green-lt); border-radius:8px; font-size:11px; color:var(--green); font-style:italic;">
+        Portfolio health is a key watch item going into the next quarter.
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;">
       <div class="card-ttl">Arrears</div>
       <div style="margin-top:16px;">
         <div class="rep-row">
@@ -1022,7 +1035,7 @@ function checkPassword() {
           <span class="rep-pct" style="color:var(--green);font-weight:700;">0.0%</span>
         </div>
       </div>
-      <div style="margin-top:16px; padding:10px 12px; background:var(--green-lt); border-radius:8px; font-size:11px; color:var(--green); font-style:italic;">
+      <div style="margin-top:auto; padding:10px 12px; background:var(--green-lt); border-radius:8px; font-size:11px; color:var(--green); font-style:italic;">
         Since underwriting changed, the fund is performing better.
       </div>
     </div>
@@ -1248,6 +1261,34 @@ new Chart(document.getElementById('cOKRTrend'), {
   plugins: [{ id: 'okrLabels', afterDatasetsDraw(chart) {
     const { ctx } = chart, meta = chart.getDatasetMeta(0);
     ctx.save(); ctx.font = "700 10px 'Plus Jakarta Sans', sans-serif"; ctx.fillStyle = '#1A2E1C'; ctx.textAlign = 'center';
+    meta.data.forEach((bar, i) => ctx.fillText(chart.data.datasets[0].data[i] + '%', bar.x, bar.y - 4));
+    ctx.restore();
+  }}]
+});
+// 4c. DELINQUENCY >30 DAYS — 2026 quarterly trend
+new Chart(document.getElementById('cDelinquency'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1 2026','Q2 2026','Q3 2026'],
+    datasets: [
+      { label: 'Delinquency >30 Days', data: [16.8, 16.7, 18.8],
+        backgroundColor: ['#EF9A9A', '#EF9A9A', '#E57373'], borderRadius: 4, barPercentage: 0.6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 900, easing: 'easeOutQuart' },
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` Delinquency: ${ctx.parsed.y}%` } } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 } } },
+      y: { min: 0, max: 25, grid: { color: C.border }, border: { display: false },
+           ticks: { stepSize: 5, font: { size: 10 }, callback: v => v + '%' } }
+    }
+  },
+  plugins: [{ id: 'delinqLabels', afterDatasetsDraw(chart) {
+    const { ctx } = chart, meta = chart.getDatasetMeta(0);
+    ctx.save(); ctx.font = "700 10px 'Plus Jakarta Sans', sans-serif"; ctx.fillStyle = '#B84242'; ctx.textAlign = 'center';
     meta.data.forEach((bar, i) => ctx.fillText(chart.data.datasets[0].data[i] + '%', bar.x, bar.y - 4));
     ctx.restore();
   }}]
@@ -1629,6 +1670,7 @@ function applyRow(d) {
   setChartPoint('cBizFunded', q, 0, num(d.businesses_funded_period));
   setChartPoint('cBizFunded', q, 1, num(d.businesses_funded_cumulative));
   setChartPoint('cNPS', q, 0, num(d.nps_score));
+  setChartPoint('cDelinquency', q, 0, num(d.delinquency_pct));
 }
 
 async function loadDashboardData() {
