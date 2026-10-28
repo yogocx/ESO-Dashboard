@@ -703,20 +703,15 @@ function checkPassword() {
       <div class="card-ttl">Revenue per FTE — Efficiency Trajectory</div>
       <div class="chart-wrap" style="height:220px; overflow:visible; max-width:100%;"><canvas id="cFTE"></canvas></div>
       <div style="margin-top:12px">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">2025 Rev / FTE</span><span class="fv green" data-field="rev_per_fte">$149,976</span></div>
-        <div class="fin-row"><span class="fl" style="color:var(--text3)">2026 Projected (as of Q3)</span><span class="fv" style="color:var(--gold)" data-field="rev_per_fte_proj">$190,000</span></div>
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">2026 Projected (as of Q3)</span><span class="fv green" data-field="rev_per_fte_proj">$190,000</span></div>
+        <div class="fin-row"><span class="fl">Q2 2026 Actual</span><span class="fv">$287,818</span></div>
+        <div class="fin-row"><span class="fl">2025 Rev / FTE</span><span class="fv" data-field="rev_per_fte">$149,976</span></div>
+        <div class="fin-row"><span class="fl">FTEs Today · Q3 2026</span><span class="fv" data-field="fte_count">10</span></div>
       </div>
     </div>
     <div class="card">
       <div class="card-ttl">OKR Attainment</div>
-      <div style="display:flex;align-items:baseline;gap:10px;margin:6px 0 2px;">
-        <div data-field="okr_center_value" style="font-size:40px;font-weight:700;color:var(--navy);line-height:1;">91%</div>
-        <div>
-          <div style="font-size:11px;color:var(--text3);" data-field="okr_center_period">Q3 2026</div>
-          <div data-field="okr_center_delta" style="font-size:10px;color:var(--green);font-weight:700;">▲ 11% above target</div>
-        </div>
-      </div>
-      <div style="margin:10px 0 10px;">
+      <div style="margin:6px 0 10px;">
         <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;">2026 Quarterly Trend · Target 80%</div>
         <div class="chart-wrap" style="height:200px; overflow:visible; max-width:100%;"><canvas id="cOKRTrend" role="img" aria-label="OKR attainment by quarter: Q1 81%, Q2 88%, Q3 91%, target 80%"></canvas></div>
       </div>
@@ -731,7 +726,7 @@ function checkPassword() {
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;">
           <span style="color:var(--text3)">0%</span>
-          <span data-field="okr_target_line" style="color:var(--green);font-weight:700;">▲ Target: 80% · +11% ✓</span>
+          <span data-field="okr_target_line" style="color:var(--green);font-weight:700;">▲ Target: 80% · 11% above target ✓</span>
           <span style="color:var(--text3)">100%</span>
         </div>
       </div>
@@ -740,7 +735,9 @@ function checkPassword() {
       <div class="card-ttl">Cost per Entrepreneur Served</div>
       <div class="chart-wrap" style="height:200px; overflow:visible; max-width:100%;"><canvas id="cCost"></canvas></div>
       <div style="margin-top:12px">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--text2); font-weight:600">Q3 2026 Actual</span><span class="fv" style="color:var(--navy)" data-field="cost_per_entrepreneur_display">$6,064 · 2025: $7,320 · Proj. $4,273 by 2027</span></div>
+        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600">Q3 2026 Actual</span><span class="fv green" data-field="cost_per_entrepreneur_display">$6,064</span></div>
+        <div class="fin-row"><span class="fl">2025 Actual</span><span class="fv">$7,320</span></div>
+        <div class="fin-row"><span class="fl">Projected by 2027</span><span class="fv" style="color:var(--gold)">$4,273</span></div>
       </div>
     </div>
   </div>
@@ -1003,7 +1000,6 @@ function checkPassword() {
         <div class="chart-wrap" style="height:200px; overflow:visible; max-width:100%;"><canvas id="cDelinquency" role="img" aria-label="Delinquency over 30 days by quarter: Q1 16.8%, Q2 16.7%, Q3 18.8%"></canvas></div>
       </div>
       <div style="margin-top:4px;">
-        <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;">Q1 2026 · Q2 2026</span><span class="fv">16.8% · 16.7%</span></div>
         <div class="fin-row"><span class="fl">Loan Repayment · Q3</span><span class="fv">40.6%</span></div>
       </div>
       <div style="margin-top:10px; padding:10px 12px; background:var(--green-lt); border-radius:8px; font-size:11px; color:var(--green); font-style:italic;">
@@ -1302,17 +1298,17 @@ new Chart(document.getElementById('cCost'), {
       {
         label:'Cost / Entrepreneur (Actuals)',
         data:[593,9446,8014,5375,7320,null,6064,6064],
-        borderColor: C.red, backgroundColor: C.red+'18',
+        borderColor: C.teal, backgroundColor: C.teal+'18',
         borderWidth:3,
-        pointBackgroundColor:[C.red,C.red,C.red,C.red,C.red,null,C.red,C.gold],
-        pointBorderColor:[C.red,C.red,C.red,C.red,C.red,null,C.red,C.gold],
+        pointBackgroundColor:[C.teal,C.teal,C.teal,C.teal,C.teal,null,C.teal,C.gold],
+        pointBorderColor:[C.teal,C.teal,C.teal,C.teal,C.teal,null,C.teal,C.gold],
         pointRadius:[5,5,5,5,5,0,5,6],
         fill:true, tension:0.3, spanGaps:true
       },
       {
         label:'Projected: $4,273 by 2027',
         data:[null,null,null,null,null,null,null,6064],
-        borderColor: C.red+'88', backgroundColor:'transparent',
+        borderColor: C.teal+'88', backgroundColor:'transparent',
         borderWidth:2, borderDash:[6,4],
         pointRadius:0,
         fill:false, tension:0.3, spanGaps:true
@@ -1597,7 +1593,7 @@ function applyRow(d) {
     setField('okr_center_period', q);
     setField('okr_period_label', q + ' Actual');
     setField('okr_center_delta', (diff >= 0 ? '▲ ' : '▼ ') + Math.abs(diff).toFixed(0) + '% ' + (diff >= 0 ? 'above' : 'below') + ' target');
-    setField('okr_target_line', '▲ Target: ' + Math.round(tgt) + '% · ' + (diff >= 0 ? '+' : '') + diff.toFixed(0) + '% ' + (diff >= 0 ? '✓' : '⚠'));
+    setField('okr_target_line', (diff >= 0 ? '▲' : '▼') + ' Target: ' + Math.round(tgt) + '% · ' + Math.abs(diff).toFixed(0) + '% ' + (diff >= 0 ? 'above target ✓' : 'below target ⚠'));
     setWidth('okr_progress_bar', Math.min(okr / tgt * 100, 100).toFixed(0));
     try {
       const t = Chart.getChart('cOKRTrend');
