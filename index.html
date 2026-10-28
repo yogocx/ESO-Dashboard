@@ -710,27 +710,16 @@ function checkPassword() {
     </div>
     <div class="card">
       <div class="card-ttl">OKR Attainment</div>
-      <div class="okr-wrap">
-        <div style="position:relative; width:200px; height:180px; margin:0 auto;">
-          <canvas id="cOKR" style="position:absolute;top:0;left:20px;width:160px;height:160px;"></canvas>
-
-          <!-- Center label -->
-          <div style="position:absolute;top:0;left:20px;width:160px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:20px;">
-            <div data-field="okr_center_value" style="font-size:32px;font-weight:700;color:var(--navy);line-height:1;">91%</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:2px;" data-field="okr_center_period">Q3 2026</div>
-            <div data-field="okr_center_delta" style="font-size:9px;color:var(--green);font-weight:700;margin-top:3px;">▲ 11% above target</div>
-          </div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin:6px 0 2px;">
+        <div data-field="okr_center_value" style="font-size:40px;font-weight:700;color:var(--navy);line-height:1;">91%</div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);" data-field="okr_center_period">Q3 2026</div>
+          <div data-field="okr_center_delta" style="font-size:10px;color:var(--green);font-weight:700;">▲ 11% above target</div>
         </div>
       </div>
-      <!-- Target label positioned on gauge -->
-      <div style="display:flex;justify-content:center;gap:16px;margin:6px 0 10px;font-size:10px;">
-        <div style="display:flex;align-items:center;gap:5px;color:var(--gold);">
-          <div style="width:10px;height:10px;border-radius:2px;background:var(--gold);"></div><span data-field="okr_legend_period">Q3 2026</span>
-        </div>
-      </div>
-      <div style="margin:2px 0 10px;">
-        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;">2026 Quarterly Trend · Q1 81% → Q2 88% → Q3 91%</div>
-        <div style="position:relative;height:120px;"><canvas id="cOKRTrend" role="img" aria-label="OKR attainment by quarter: Q1 81%, Q2 88%, Q3 91%, target 80%"></canvas></div>
+      <div style="margin:10px 0 10px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;">2026 Quarterly Trend · Target 80%</div>
+        <div class="chart-wrap" style="height:200px; overflow:visible; max-width:100%;"><canvas id="cOKRTrend" role="img" aria-label="OKR attainment by quarter: Q1 81%, Q2 88%, Q3 91%, target 80%"></canvas></div>
       </div>
       <div style="margin-top:4px;">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;" data-field="okr_period_label">Q3 2026 Actual</span><span class="fv green" data-field="okr_q1_display">91%</span></div>
@@ -1232,37 +1221,6 @@ new Chart(document.getElementById('cFTE'), {
   }
 });
 
-// 4. OKR GAUGE — Q3 2026 drives gauge, 80% target marker
-(function() {
-  // 270° arc: 81% of arc = attained, thin marker at 80%, remainder fill
-  const totalArc = 270;
-  const attained = 91;   // Q3 2026
-  const target   = 80;   // annual target line
-  const markerW  = 1.5;  // width of target needle in %
-
-  // Segments: [before target, target needle, after target to attained, remainder]
-  // target=80, attained=81 => attained > target
-  const beforeTarget = target - markerW / 2;
-  const afterTarget  = attained - target - markerW / 2;
-  const remainder    = 100 - attained;
-
-  new Chart(document.getElementById('cOKR'), {
-    type: 'doughnut',
-    data: {
-      datasets: [{
-        data: [beforeTarget, markerW, afterTarget, remainder],
-        backgroundColor: [C.gold, 'rgba(0,0,0,0)', C.gold + 'BB', C.border],
-        borderWidth: 0,
-        circumference: totalArc,
-        rotation: -135,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: true, cutout: '76%',
-      plugins: { legend: { display: false }, tooltip: { enabled: false } }
-    }
-  });
-})();
 
 // 4b. OKR QUARTERLY TREND — Q1 → Q3 2026 vs 80% target
 new Chart(document.getElementById('cOKRTrend'), {
@@ -1598,14 +1556,13 @@ function applyRow(d) {
     setField('okr_q1_display', Math.round(okr) + '%');
     setField('okr_target_display', Math.round(tgt) + '%');
     setField('okr_center_period', q);
-    setField('okr_legend_period', q);
     setField('okr_period_label', q + ' Actual');
     setField('okr_center_delta', (diff >= 0 ? '▲ ' : '▼ ') + Math.abs(diff).toFixed(0) + '% ' + (diff >= 0 ? 'above' : 'below') + ' target');
     setField('okr_target_line', '▲ Target: ' + Math.round(tgt) + '% · ' + (diff >= 0 ? '+' : '') + diff.toFixed(0) + '% ' + (diff >= 0 ? '✓' : '⚠'));
     setWidth('okr_progress_bar', Math.min(okr / tgt * 100, 100).toFixed(0));
     try {
-      const g = Chart.getChart('cOKR'), mw = 1.5;
-      if (g) { g.data.datasets[0].data = [tgt - mw / 2, mw, Math.max(0, okr - tgt - mw / 2), 100 - okr]; g.update('none'); }
+      const t = Chart.getChart('cOKRTrend');
+      if (t) { const i = t.data.labels.indexOf(q); if (i >= 0) { t.data.datasets[0].data[i] = okr; t.update('none'); } }
     } catch (e) {}
   }
 
