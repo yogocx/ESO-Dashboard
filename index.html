@@ -728,11 +728,14 @@ function checkPassword() {
           <div style="width:10px;height:10px;border-radius:2px;background:var(--gold);"></div><span data-field="okr_legend_period">Q3 2026</span>
         </div>
       </div>
+      <div style="margin:2px 0 10px;">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;">2026 Quarterly Trend · Q1 81% → Q2 88% → Q3 91%</div>
+        <div style="position:relative;height:120px;"><canvas id="cOKRTrend" role="img" aria-label="OKR attainment by quarter: Q1 81%, Q2 88%, Q3 91%, target 80%"></canvas></div>
+      </div>
       <div style="margin-top:4px;">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;" data-field="okr_period_label">Q3 2026 Actual</span><span class="fv green" data-field="okr_q1_display">91%</span></div>
         <div class="fin-row" style="background:var(--bg)"><span class="fl" style="color:var(--text3);">Annual Target</span><span class="fv" style="color:var(--text3);" data-field="okr_target_display">80%</span></div>
-        <div class="fin-row"><span class="fl">Q1 2026 · Q2 2026</span><span class="fv">81% · 88%</span></div>
-        <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv" data-field="okr_fy2025_display">85%</span></div>
+                <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv" data-field="okr_fy2025_display">85%</span></div>
       </div>
       <div style="margin-top:10px;">
         <div class="t-progress-wrap">
@@ -1261,6 +1264,36 @@ new Chart(document.getElementById('cFTE'), {
   });
 })();
 
+// 4b. OKR QUARTERLY TREND — Q1 → Q3 2026 vs 80% target
+new Chart(document.getElementById('cOKRTrend'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1 2026','Q2 2026','Q3 2026'],
+    datasets: [
+      { label: 'OKR Attainment', data: [81, 88, 91],
+        backgroundColor: [C.gold+'77', C.gold+'AA', C.gold], borderRadius: 4, order: 2, barPercentage: 0.6 },
+      { type: 'line', label: 'Target 80%', data: [80, 80, 80],
+        borderColor: C.red, borderDash: [5,4], borderWidth: 1.5, pointRadius: 0, fill: false, order: 1 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 900, easing: 'easeOutQuart' },
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } } },
+    scales: {
+      x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 } } },
+      y: { min: 60, max: 100, grid: { color: C.border }, border: { display: false },
+           ticks: { stepSize: 10, font: { size: 10 }, callback: v => v + '%' } }
+    }
+  },
+  plugins: [{ id: 'okrLabels', afterDatasetsDraw(chart) {
+    const { ctx } = chart, meta = chart.getDatasetMeta(0);
+    ctx.save(); ctx.font = "700 10px 'Plus Jakarta Sans', sans-serif"; ctx.fillStyle = '#1A2E1C'; ctx.textAlign = 'center';
+    meta.data.forEach((bar, i) => ctx.fillText(chart.data.datasets[0].data[i] + '%', bar.x, bar.y - 4));
+    ctx.restore();
+  }}]
+});
 // 5. COST PER ENTREPRENEUR (confirmed COGS)
 new Chart(document.getElementById('cCost'), {
   type: 'line',
