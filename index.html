@@ -635,7 +635,7 @@ function checkPassword() {
         <span style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;">Executive Summary</span>
       </div>
       <p class="exec-summary" style="font-size:14px;color:rgba(255,255,255,0.78);line-height:1.8;margin:0;">
-        ESO closes Q3 2026 with <strong style="color:var(--gold-lt);">$1.50M in confirmed revenue</strong>, 47.5% of the $3.166M annual goal, and an active pipeline that nearly doubled in the quarter to <strong style="color:var(--gold-lt);">$6.73M</strong>. Q3 was a softer earnings quarter: with no fund management fees recognized in the period, ESO posted a Q3 net operating loss of $322,604, bringing year-to-date net income to a loss of $48,899. Execution stayed strong, with OKR attainment rising to <strong style="color:var(--gold-lt);">91% in Q3</strong> against the 80% target and the team holding steady at 10 FTEs. Lending accelerated, with <strong style="color:var(--gold-lt);">$385,000 deployed in Q3</strong>, the strongest quarter of 2026, funding 8 businesses and lifting cumulative capital deployed to <strong style="color:var(--gold-lt);">$8.81M</strong> across 213 businesses since inception. Delinquency above 30 days rose to 18.8% while repayment held at 40.6%, making portfolio health a Q4 watch item. Business Services has recognized $334,066 year to date, with $661,200 booked and not yet recognized. The Q4 priority is clear: convert pipeline into recognized revenue to close the remaining $1.66M gap.
+        ESO closes Q3 2026 with <strong style="color:var(--gold-lt);">$1.50M in confirmed revenue</strong>, 47.5% of the $3.166M annual goal, and an active pipeline that nearly doubled in the quarter to <strong style="color:var(--gold-lt);">$6.73M</strong>. Q3 was a softer earnings quarter: with no fund management fees recognized in the period, ESO posted a Q3 net operating loss of $322,604, bringing year-to-date net income to a loss of $48,899. Execution stayed strong, with OKR attainment rising to <strong style="color:var(--gold-lt);">91% in Q3</strong> against the 80% target and the team holding steady at 10 FTEs. Lending accelerated, with <strong style="color:var(--gold-lt);">$385,000 deployed in Q3</strong>, the strongest quarter of 2026, funding 8 businesses and lifting cumulative capital deployed to <strong style="color:var(--gold-lt);">$8.81M</strong> across 213 businesses since inception. Delinquency above 30 days rose to 18.8% while repayment held at 40.6%, making portfolio health a key watch item. Business Services has recognized $334,066 year to date, with $661,200 booked and not yet recognized. The priority now is clear: convert pipeline into recognized revenue to close the remaining $1.66M gap.
       </p>
     </div>
   </div>
@@ -656,6 +656,7 @@ function checkPassword() {
       <div class="kpi-lbl">Entrepreneurs Served</div>
       <div class="kpi-val" data-field="entrepreneurs_served">15</div>
       <div class="kpi-note"><span data-field="period_q">Q3 2026</span> · Cohort, Fund &amp; Monthly Sessions</div>
+      <div class="kpi-note" style="margin-top:4px;opacity:0.85;">Trend: Q1 15 · Q2 32 · Q3 15</div>
     </div>
     <div class="kpi">
       <div class="kpi-lbl">Capital Deployed YTD</div>
@@ -679,7 +680,7 @@ function checkPassword() {
       <div class="chart-wrap" style="height:270px; overflow:visible; max-width:100%;"><canvas id="cRevenue"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Net Margin % by Year</div>
+      <div class="card-ttl">Net Margin % by Year + 2026 YTD by Quarter</div>
       <div class="chart-wrap" style="height:180px; overflow:visible; max-width:100%;"><canvas id="cMargin"></canvas></div>
       <div style="margin-top:14px">
         <div class="fin-row"><span class="fl">2025 Net Income</span><span class="fv green">$642,759</span></div>
@@ -730,6 +731,7 @@ function checkPassword() {
       <div style="margin-top:4px;">
         <div class="fin-row" style="background:var(--green-lt)"><span class="fl" style="color:var(--green);font-weight:600;" data-field="okr_period_label">Q3 2026 Actual</span><span class="fv green" data-field="okr_q1_display">91%</span></div>
         <div class="fin-row" style="background:var(--bg)"><span class="fl" style="color:var(--text3);">Annual Target</span><span class="fv" style="color:var(--text3);" data-field="okr_target_display">80%</span></div>
+        <div class="fin-row"><span class="fl">Q1 2026 · Q2 2026</span><span class="fv">81% · 88%</span></div>
         <div class="fin-row"><span class="fl">Full Year 2025</span><span class="fv" data-field="okr_fy2025_display">85%</span></div>
       </div>
       <div style="margin-top:10px;">
@@ -754,8 +756,8 @@ function checkPassword() {
   <div class="row row-4">
     <div class="card big-card"><div class="big-n">19</div><div class="big-l">FTEs at Peak · 2024</div></div>
     <div class="card big-card"><div class="big-n" style="color:var(--navy)" data-field="fte_count">10</div><div class="big-l">FTEs Today · <span data-field="period_q">Q3 2026</span></div></div>
-    <div class="card big-card"><div class="big-n" data-field="total_entrepreneurs">701</div><div class="big-l">Total Entrepreneurs Served to Date</div></div>
-    <div class="card big-card"><div class="big-n" style="color:var(--green)" data-field="nps_current">88</div><div class="big-l">NPS 2026</div></div>
+    <div class="card big-card"><div class="big-n" data-field="total_entrepreneurs">701</div><div class="big-l">Total Entrepreneurs Served to Date</div><div style="font-size:10px;color:var(--text3);margin-top:4px;">Q1 678 · Q2 693 · Q3 701</div></div>
+    <div class="card big-card"><div class="big-n" style="color:var(--green)" data-field="nps_current">88</div><div class="big-l">NPS 2026</div><div style="font-size:10px;color:var(--text3);margin-top:4px;">Q2 88 · Q3 88</div></div>
   </div>
 </div>
 
@@ -924,6 +926,7 @@ function checkPassword() {
             <div>
               <div style="font-size:12px;font-weight:600;color:#72D476;">Total Pipeline (<span data-field="period_q">Q3 2026</span>)</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.35);">Submitted · Business Development</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:3px;">Trend: Q1 $1.86M → Q2 $3.37M → Q3 $6.73M</div>
             </div>
             <div data-field="pipeline_value" style="font-size:16px;font-weight:700;color:#72D476;">$6,729,000</div>
           </div>
@@ -980,13 +983,13 @@ function checkPassword() {
         <div class="rep-row"><span class="rep-yr">2025</span><div class="rep-bar-wrap"><div class="rep-bar" style="width:44.5%"></div></div><span class="rep-pct">44.5%</span></div>
         <div class="rep-row">
           <span class="rep-yr">Q1 '26</span>
-          <div class="rep-bar-wrap"><div class="rep-bar" style="width:35.7%"></div></div>
-          <span class="rep-pct">35.7%</span>
+          <div class="rep-bar-wrap"><div class="rep-bar" style="width:35.6%"></div></div>
+          <span class="rep-pct">35.6%</span>
         </div>
         <div class="rep-row">
           <span class="rep-yr">Q2 '26</span>
           <div class="rep-bar-wrap"><div class="rep-bar" style="width:41.2%"></div></div>
-          <span class="rep-pct">41.0%</span>
+          <span class="rep-pct">41.2%</span>
         </div>
         <div class="rep-row" style="border-bottom:none">
           <span class="rep-yr" style="color:var(--gold); font-weight:700">Q3 '26</span>
@@ -998,6 +1001,7 @@ function checkPassword() {
         <div>
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);">Delinquency &gt;30 Days</div>
           <div style="font-size:10px;color:var(--text3);margin-top:2px;"><span data-field="period_q">Q3 2026</span> · Lending Portfolio</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;">Trend: Q1 16.8% · Q2 16.7% · Q3 18.8%</div>
         </div>
         <div data-field="delinquency" style="font-size:24px;font-weight:700;color:var(--gold);">18.8%</div>
       </div>
@@ -1153,16 +1157,16 @@ new Chart(document.getElementById('cRevenue'), {
 new Chart(document.getElementById('cMargin'), {
   type: 'line',
   data: {
-    labels: ['2022','2023','2024','2025','2026 YTD (Q3)'],
+    labels: ['2022','2023','2024','2025','Q1 2026 YTD','Q2 2026 YTD','Q3 2026 YTD'],
     datasets: [
       {
         label: 'Net Margin %',
-        data: [0.8,12.2,1.6,22.0,-3.3],
+        data: [0.8,12.2,1.6,22.0,2.8,21.3,-3.3],
         borderColor: C.gold,
         backgroundColor: C.gold+'22',
         borderWidth: 3,
-        pointBackgroundColor: [C.gold,C.gold,C.gold,C.gold,C.gold],
-        pointRadius: [5,5,5,5,5],
+        pointBackgroundColor: [C.gold,C.gold,C.gold,C.gold,C.gold,C.gold,C.red],
+        pointRadius: [5,5,5,5,5,5,6],
         fill: true,
         tension: 0.35,
         spanGaps: false,
@@ -1261,11 +1265,11 @@ new Chart(document.getElementById('cFTE'), {
 new Chart(document.getElementById('cCost'), {
   type: 'line',
   data: {
-    labels: ['2021','2022','2023','2024','2025','Q1 2026','Q2 2026'],
+    labels: ['2021','2022','2023','2024','2025','Q1 2026','Q2 2026','Q3 2026'],
     datasets: [
       {
         label:'Cost / Entrepreneur (Actuals)',
-        data:[593,9446,8014,5375,7320,null,null],
+        data:[593,9446,8014,5375,7320,null,null,null],
         borderColor: C.red, backgroundColor: C.red+'18',
         borderWidth:3,
         pointBackgroundColor:[C.red,C.red,C.red,C.red,C.red,null,null],
@@ -1274,7 +1278,7 @@ new Chart(document.getElementById('cCost'), {
       },
       {
         label:'Projected',
-        data:[null,null,null,null,7320,null,6064],
+        data:[null,null,null,null,7320,null,6064,null],
         borderColor: C.red+'88', backgroundColor:'transparent',
         borderWidth:2, borderDash:[6,4],
         pointBackgroundColor:[null,null,null,null,C.red,C.gold,C.gold],
@@ -1339,10 +1343,10 @@ new Chart(document.getElementById('cBizFunded'), {
   data: {
     labels: ['2022','2023','2024','2025','Q1 2026','Q2 2026','Q3 2026'],
     datasets: [
-      { label:'Funded (Year)', data:[25,38,77,51,2,6,8],
+      { label:'Funded (Year)', data:[25,41,79,52,2,6,8],
         backgroundColor:[C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.navyMid,C.green],
         borderRadius:5, yAxisID:'y1', order:2 },
-      { type:'line', label:'Cumulative', data:[25,63,140,191,193,199,213],
+      { type:'line', label:'Cumulative', data:[25,66,145,197,199,205,213],
         borderColor:C.teal, backgroundColor:'transparent',
         borderWidth:2.5, pointBackgroundColor:C.teal, pointBorderColor:C.teal, pointRadius:5,
         yAxisID:'y2', tension:0.3, order:1 }
